@@ -13,7 +13,7 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
     <!--TODO Change Navigation bar from color to custom made Background-->
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/user_profile_img"
         android:layout_width="80dp"
         android:layout_height="140dp"
         android:layout_marginBottom="8dp"
@@ -21,29 +21,29 @@
         android:scaleType="centerCrop"
         android:src="@drawable/profile"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintEnd_toStartOf="@+id/user_profile_mail_txt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.49" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/user_profile_mail_txt"
         android:layout_width="wrap_content"
         android:layout_height="17dp"
         android:layout_marginStart="8dp"
         android:text="@string/firsttest_gmail_com"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintStart_toEndOf="@+id/user_profile_img"
+        app:layout_constraintTop_toBottomOf="@+id/user_profile_name_txt" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/user_profile_name_txt"
         android:layout_width="wrap_content"
         android:layout_height="17dp"
         android:layout_marginStart="8dp"
         android:text="@string/first_test"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintBottom_toTopOf="@+id/user_profile_mail_txt"
+        app:layout_constraintStart_toEndOf="@+id/user_profile_img"
         app:layout_constraintTop_toTopOf="parent" />
 
 
