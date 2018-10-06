@@ -1,5 +1,6 @@
 package no.hiof.ahmedak.papervault;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    // When Back Button is Pressed
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -94,20 +96,28 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Intent intent;
 
         if (id == R.id.nav_Home) {
-            //TODO: Handle the Home action
+            intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+
+
         } else if (id == R.id.nav_my_receipts) {
-            //TODO: Handle the My Receipts action
+            intent = new Intent(getApplicationContext(),MyReceipts.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_my_favourite) {
             //TODO: Handle the My Favourite action
 
+
         } else if (id == R.id.nav_statistics) {
             //TODO: Handle the Statistics action
 
+
         } else if (id == R.id.nav_settings) {
             //TODO: Handle the Settings action
+
 
         }
 
