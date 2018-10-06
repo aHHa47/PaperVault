@@ -3,6 +3,8 @@ package no.hiof.ahmedak.papervault;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -69,8 +72,18 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_info) {
+            //TODO: Show Dialog box with app info.
+            Toast toast = Toast.makeText(getApplicationContext(),"This is info Action ",Toast.LENGTH_LONG);
+            toast.show();
+        }
+        // DONE: Fix Search Action.
+        // TODO: implement search engine
+        else if(id == R.id.action_search){
+            // Expand Search bar onClick.
+            item.expandActionView();
+
+
         }
 
         return super.onOptionsItemSelected(item);

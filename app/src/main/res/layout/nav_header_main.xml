@@ -28,8 +28,9 @@
 
     <TextView
         android:id="@+id/user_profile_mail_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="17dp"
+        android:layout_width="140dp"
+        android:layout_height="26dp"
+        android:gravity="center"
         android:layout_marginStart="8dp"
         android:text="@string/firsttest_gmail_com"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -38,9 +39,10 @@
 
     <TextView
         android:id="@+id/user_profile_name_txt"
-        android:layout_width="wrap_content"
-        android:layout_height="17dp"
+        android:layout_width="74dp"
+        android:layout_height="20dp"
         android:layout_marginStart="8dp"
+        android:gravity="center"
         android:text="@string/first_test"
         app:layout_constraintBottom_toTopOf="@+id/user_profile_mail_txt"
         app:layout_constraintStart_toEndOf="@+id/user_profile_img"
