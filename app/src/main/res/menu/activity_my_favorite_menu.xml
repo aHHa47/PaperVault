@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MyFavorite">
+
+
+
+    <item
+        android:id="@+id/action_search_sort_name"
+        android:icon="@drawable/ic_sort"
+        android:title="@string/sort_list"
+        android:orderInCategory="2"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/item_sort_alpha"
+                android:orderInCategory="100"
+                android:icon="@drawable/ic_action_sort_2"
+                android:title="Name"
+                android:tooltipText="@string/sort_list_alphabetically"
+                />
+            <item
+                android:id="@+id/item_sort_date"
+                android:orderInCategory="100"
+                android:icon="@drawable/ic_date_range"
+                android:title="Date"
+                android:tooltipText="@string/sort_list_by_date"
+                />
+            <item
+                android:id="@+id/item_sort_price"
+                android:orderInCategory="100"
+                android:icon="@drawable/ic_attach_money"
+                android:title="Price"
+                android:tooltipText="@string/sort_list_by_price"
+                />
+            <item
+                android:id="@+id/item_sort_near_me"
+                android:orderInCategory="100"
+                android:icon="@drawable/ic_near_me"
+                android:title="Near me"
+                android:tooltipText="@string/sort_near_me_list"
+                />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/action_search_my_favorite"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_search"
+        android:title="@string/action_info"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:tooltipText="Search.."/>
+
+
+
+
+</menu>

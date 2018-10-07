@@ -33,7 +33,7 @@
                 android:layout_height="match_parent"
                 android:padding="10dp"
                 android:gravity="left"
-                android:text="My Receipts"
+                android:text="@string/my_receipts_text"
                 android:textColor="@android:color/white"
                 android:textSize="22sp"
                 android:textStyle="bold" />

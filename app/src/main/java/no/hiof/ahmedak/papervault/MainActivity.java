@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    // Navigation
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent;
 
         if (id == R.id.nav_Home) {
+
             intent = new Intent(getApplicationContext(),MainActivity.class);
             startActivity(intent);
 
@@ -108,17 +110,19 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
 
         } else if (id == R.id.nav_my_favourite) {
-            //TODO: Handle the My Favourite action
+            intent = new Intent(getApplicationContext(),MyFavorite.class);
+            startActivity(intent);
 
 
         } else if (id == R.id.nav_statistics) {
-            //TODO: Handle the Statistics action
+           intent = new Intent(getApplicationContext(),Statistics.class);
+           startActivity(intent);
+
 
 
         } else if (id == R.id.nav_settings) {
-            //TODO: Handle the Settings action
-
-
+           intent = new Intent(getApplicationContext(),SettingsActivity.class);
+           startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

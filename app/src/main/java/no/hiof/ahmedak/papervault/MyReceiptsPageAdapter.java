@@ -19,6 +19,7 @@ public class MyReceiptsPageAdapter extends FragmentPagerAdapter {
     }
 
     @Nullable
+    // displaying Tab Titles.
     @Override
     public CharSequence getPageTitle(int position) {
         return tabTitles[position];

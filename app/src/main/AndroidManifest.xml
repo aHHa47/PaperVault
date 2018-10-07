@@ -22,10 +22,15 @@
         </activity>
         <activity
             android:name=".MyReceipts"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/app_name">
-
-        </activity>
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MyFavorite"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Statistics" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>
