@@ -1,4 +1,4 @@
-package no.hiof.ahmedak.papervault;
+package no.hiof.ahmedak.papervault.Fragments;
 
 
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+
+import no.hiof.ahmedak.papervault.Adapters.ReceiptsAdapter;
+import no.hiof.ahmedak.papervault.R;
 
 
 /**

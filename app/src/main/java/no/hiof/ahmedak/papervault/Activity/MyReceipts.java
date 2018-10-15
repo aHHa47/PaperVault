@@ -1,20 +1,14 @@
-package no.hiof.ahmedak.papervault;
+package no.hiof.ahmedak.papervault.Activity;
 
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.widget.Adapter;
-import android.widget.TableLayout;
 
-import java.util.ArrayList;
+import no.hiof.ahmedak.papervault.Adapters.MyReceiptsPageAdapter;
+import no.hiof.ahmedak.papervault.R;
 
 public class MyReceipts extends AppCompatActivity {
 

@@ -1,9 +1,12 @@
-package no.hiof.ahmedak.papervault;
+package no.hiof.ahmedak.papervault.Adapters;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import no.hiof.ahmedak.papervault.Fragments.AllReceiptsFragment;
+import no.hiof.ahmedak.papervault.Fragments.StoreFragment;
 
 // This is an adapter for My Receipts TabLayOut. Extends FragmentPageAdapter since we have multiple tabs.
 public class MyReceiptsPageAdapter extends FragmentPagerAdapter {

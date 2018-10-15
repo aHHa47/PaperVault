@@ -1,4 +1,4 @@
-package no.hiof.ahmedak.papervault;
+package no.hiof.ahmedak.papervault.Adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+
+import no.hiof.ahmedak.papervault.R;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHolder> {
 

@@ -1,4 +1,4 @@
-package no.hiof.ahmedak.papervault;
+package no.hiof.ahmedak.papervault.Adapters;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +9,9 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-class ContnentMainAdapter extends RecyclerView.Adapter<ContnentMainAdapter.ViewHolder> {
+import no.hiof.ahmedak.papervault.R;
+
+public class ContnentMainAdapter extends RecyclerView.Adapter<ContnentMainAdapter.ViewHolder> {
 
     //TODO: Change ArrayList Data from TextView to ImageView.
     private ArrayList<Integer>mdata;

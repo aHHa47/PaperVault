@@ -1,4 +1,4 @@
-package no.hiof.ahmedak.papervault;
+package no.hiof.ahmedak.papervault.Activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import no.hiof.ahmedak.papervault.R;
 
 public class MyFavorite extends AppCompatActivity {
     Toast toast;
