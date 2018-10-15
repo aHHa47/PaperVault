@@ -8,8 +8,13 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.widget.Adapter;
 import android.widget.TableLayout;
+
+import java.util.ArrayList;
 
 public class MyReceipts extends AppCompatActivity {
 
@@ -19,6 +24,7 @@ public class MyReceipts extends AppCompatActivity {
     MyReceiptsPageAdapter myReceiptsPageAdapter;
     TabItem tabStore;
     TabItem tabAllReceipts;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +44,7 @@ public class MyReceipts extends AppCompatActivity {
         // Sett Adapter to our View Pager
         viewPager.setAdapter(myReceiptsPageAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
