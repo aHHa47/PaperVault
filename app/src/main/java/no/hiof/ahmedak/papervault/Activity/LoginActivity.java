@@ -44,11 +44,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import no.hiof.ahmedak.papervault.R;
+import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
+ *
+ * TODO: Legg referance i en egen metode og kjør denne i OnCreate.
  */
 public class LoginActivity extends Activity {
 
@@ -73,6 +76,7 @@ public class LoginActivity extends Activity {
     // FireBase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUtilities firebaseUtilities;
 
     private Context mContext;
 
@@ -84,8 +88,10 @@ public class LoginActivity extends Activity {
         // Declare Context
         mContext = LoginActivity.this;
 
+        firebaseUtilities = new FirebaseUtilities(mContext);
+
         // Call FireBase Method
-        FirebaseAuthSetup();
+        firebaseUtilities.FirebaseAuthSetup();
         initialize();
 
         // Get UI Reference
@@ -140,7 +146,6 @@ public class LoginActivity extends Activity {
     }
 
     /**
-     * FireBase Method
      * We initialize FireBase sign in and move to MainActivity.
      */
     private void initialize(){
@@ -195,27 +200,7 @@ public class LoginActivity extends Activity {
 
     }
 
-    private void FirebaseAuthSetup(){
-        Log.d(TAG, "FirebaseAuthSetup: Setting up firebase auth");
-        // Declare FireBase Instance.
-        mAuth = FirebaseAuth.getInstance();
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-
-                if(user != null){
-                    // User is signed in
-                    Log.d(TAG, "onAuthStateChanged: Signed in " + user.getUid());
-                }else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged: Signed Out");
-                }
-            }
-        };
-
-    }
 
     @Override
     protected void onStart() {
