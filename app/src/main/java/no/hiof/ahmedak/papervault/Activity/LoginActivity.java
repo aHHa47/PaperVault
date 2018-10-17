@@ -75,8 +75,7 @@ public class LoginActivity extends Activity {
 
     // FireBase
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUtilities firebaseUtilities;
+    private FirebaseAuth.AuthStateListener mAuthListner;
 
     private Context mContext;
 
@@ -88,10 +87,8 @@ public class LoginActivity extends Activity {
         // Declare Context
         mContext = LoginActivity.this;
 
-        firebaseUtilities = new FirebaseUtilities(mContext);
-
         // Call FireBase Method
-        firebaseUtilities.FirebaseAuthSetup();
+        FirebaseAuthSetup();
         initialize();
 
         // Get UI Reference
@@ -147,6 +144,7 @@ public class LoginActivity extends Activity {
 
     /**
      * We initialize FireBase sign in and move to MainActivity.
+     * Email Verification Check will be checked on login.
      */
     private void initialize(){
         mEmailSignInButton = findViewById(R.id.login_button);
@@ -172,14 +170,34 @@ public class LoginActivity extends Activity {
                     mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
                             if(task.isSuccessful()){
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "onComplete: Sign in SUCCESS!!");
-                                // Set Progress Bar Visibility Hidden
-                                mProgressBar.setVisibility(View.GONE);
-                                // Set Loading Text Visibility Hidden
-                                mLoadingTxt.setVisibility(View.GONE);
+
+                                // Check if Email is Verified, if not keep user signed out.
+                                try{
+                                    if(firebaseUser.isEmailVerified()){
+                                        Log.d(TAG, "onComplete: isEmailVerified");
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                    }else {
+                                        Toast.makeText(mContext,"Email is not verified \n check your mail inbox", Toast.LENGTH_LONG).show();
+                                        // Set Login Form to visible if its hidden.
+                                        mLoginFormView.setVisibility(View.VISIBLE);
+                                        // Set Loading TextView Visibility Hidden
+                                        mLoadingTxt.setVisibility(View.GONE);
+                                        // Set Progress Bar Visibility Hidden
+                                        mProgressBar.setVisibility(View.GONE);
+                                        mAuth.signOut();
+                                    }
+
+                                }catch (NullPointerException e){
+
+                                    Log.d(TAG, "onComplete: NullPointerException" + e.getMessage());
+                                }
+
                             }else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "onComplete: ",task.getException() );
@@ -188,33 +206,51 @@ public class LoginActivity extends Activity {
                         }
                     });
                 }
-                // if login is successful, navigate to our MainActivity.
-                if(mAuth.getCurrentUser() != null){
-                    Intent intent = new Intent(mContext, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-
             }
         });
 
     }
 
+    /**
+     * FireBase Authentication Setup.
+     * checks if user is already logged in.
+     */
 
+    public void FirebaseAuthSetup(){
+        Log.d(TAG, "FirebaseAuthSetup: Setting up firebase auth");
+        // Declare FireBase Instance.
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListner = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if(user != null){
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged: Signed in " + user.getUid());
+                }else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged: Signed Out");
+                }
+            }
+        };
+
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
         // look for user Auth on start
-        mAuth.addAuthStateListener(mAuthListener);
+        mAuth.addAuthStateListener(mAuthListner);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(mAuthListener != null){
+        if(mAuthListner != null){
             // Stop and remove Auth listener
-            mAuth.removeAuthStateListener(mAuthListener);
+            mAuth.removeAuthStateListener(mAuthListner);
         }
     }
 

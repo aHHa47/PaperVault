@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,13 +26,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import no.hiof.ahmedak.papervault.Adapters.ContnentMainAdapter;
+import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
+import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -46,6 +56,11 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListner;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference myRef;
+    private FirebaseUtilities firebaseUtilities;
+    private TextView profileName;
+    private TextView profileEmail;
 
     // Temp
 
@@ -60,6 +75,9 @@ public class MainActivity extends AppCompatActivity
 
         // Init FirebaseAuth
         FirebaseAuthSetup();
+
+
+        firebaseUtilities = new FirebaseUtilities(getApplicationContext());
 
 
         // Toolbar
@@ -84,6 +102,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Get Reference to navigation drawer profile Text View.
+        View headerView = navigationView.getHeaderView(0);
+        profileEmail = headerView.findViewById(R.id.user_profile_mail_txt);
+        profileName = headerView.findViewById(R.id.user_profile_name_txt);
 
 
         // DataSet
@@ -132,10 +154,6 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-
-
-
-
     }
 
     // When Back Button is Pressed
@@ -166,8 +184,7 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_info) {
             //TODO: Show Dialog box with app info.
-            Toast toast = Toast.makeText(getApplicationContext(),"This is info Action ",Toast.LENGTH_LONG);
-            toast.show();
+            mAuth.signOut();
         }
         // DONE: Fix Search Action.
         // TODO: implement search engine
@@ -207,17 +224,15 @@ public class MainActivity extends AppCompatActivity
            intent = new Intent(getApplicationContext(),Statistics.class);
            startActivity(intent);
             // Settings
-        } else if (id == R.id.nav_settings) {
-           intent = new Intent(getApplicationContext(),SettingsActivity.class);
-           startActivity(intent);
+        } else if (id == R.id.sign_out_user){
+          intent = new Intent(getApplicationContext(),ActivitySettings.class);
+          startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
 
 
     /**
@@ -239,6 +254,10 @@ public class MainActivity extends AppCompatActivity
         // Declare FireBase Instance.
         mAuth = FirebaseAuth.getInstance();
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = firebaseDatabase.getReference();
+
+
         mAuthListner = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -258,7 +277,31 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
+        // Get Data From data base.
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                Log.d(TAG, "onDataChange: Displaying User info");
+                Log.d(TAG, "onDataChange: User info: " + firebaseUtilities.getUsersInformation(dataSnapshot).toString());
+
+                // Get User Information From Database.
+                User user = firebaseUtilities.getUsersInformation(dataSnapshot);
+                profileEmail.setText(user.geteMail());
+                profileName.setText(user.getFirstName() + " " + user.getLastName());
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Log.d(TAG, "onCancelled: Database Error" + databaseError.getMessage());
+            }
+        });
+
     }
+
 
     @Override
     protected void onStart() {

@@ -99,6 +99,10 @@
     <string name="Table_Date_title">Date</string>
     <string name="Table_Price_Title">Price</string>
 
+    <string name="profile_string">Profile</string>
+    <string name="Sign_Out_string">Sign Out</string>
+
+
 
     <!-- Strings related to login -->
     <string name="title_activity_login">Sign in</string>
@@ -121,6 +125,14 @@
     <string name="last_name_missing">Please Enter Last Name</string>
     <string name="email_missing">Please Enter Email Address</string>
     <string name="password_missing">Please Enter Secure Password</string>
+
+
+    <!--FireBase Database Fields-->
+    <string name="dbname_Users">users</string>
+    <string name="sign_out">Sign out</string>
+
+
+
 
 
 </resources>

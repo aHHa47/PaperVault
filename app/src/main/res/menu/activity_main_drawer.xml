@@ -21,7 +21,7 @@
             android:icon="@drawable/ic_action_line_chart"
             android:title="@string/nav_statistics" />
         <item
-            android:id="@+id/nav_settings"
+            android:id="@+id/sign_out_user"
             android:icon="@drawable/ic_settings_applications"
             android:title="@string/nav_settings" />
     </group>

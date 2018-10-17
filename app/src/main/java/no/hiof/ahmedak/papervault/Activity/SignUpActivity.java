@@ -3,10 +3,8 @@ package no.hiof.ahmedak.papervault.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -15,12 +13,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
 import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
@@ -41,8 +40,13 @@ public class SignUpActivity extends Activity {
     private Context mContext;
     private String UserID;
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListner;
     private User users;
     private FirebaseUtilities firebaseUtilities;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
+
+
 
 
 
@@ -54,12 +58,11 @@ public class SignUpActivity extends Activity {
         // Declare FireBase Instance.
         mAuth = FirebaseAuth.getInstance();
         firebaseUtilities = new FirebaseUtilities(mContext);
-
+        GetUiReference();
+        FirebaseAuthSetup();
         if(mAuth.getCurrentUser() != null){
             UserID = mAuth.getCurrentUser().getUid();
         }
-
-        GetUiReference();
 
 
         // Navigate back to Sign in if user already got an account.
@@ -95,7 +98,6 @@ public class SignUpActivity extends Activity {
         userPasswordTxt = findViewById(R.id.Register_user_Password);
         userMailTxt = findViewById(R.id.Register_user_Email);
         RegisterUserFormView = findViewById(R.id.Register_user_form);
-        RegisterUserFormView.setVisibility(View.VISIBLE);
         mProgressBar = findViewById(R.id.Sign_up_progress);
         mProgressBar.setVisibility(View.GONE);
         loadingTxt = findViewById(R.id.Register_Loading_txt);
@@ -110,14 +112,10 @@ public class SignUpActivity extends Activity {
         /** Convert user input from edit boxes to strings.
         * to do validations and also be able to send it to FireBase.
         */
-
-        firstname = firstNameTxt.getText().toString();
-        lastname = lastNameTxt.getText().toString();
         password = userPasswordTxt.getText().toString();
         email = userMailTxt.getText().toString();
         // if Everything is ok we register the user, and set progress bar and loading text to visible
-        if(CheckUserInput(firstname,lastname,email,password)){
-            RegisterUserFormView.setVisibility(View.GONE);
+        if(CheckUserInput(email,password)){
             mProgressBar.setVisibility(View.VISIBLE);
             loadingTxt.setVisibility(View.VISIBLE);
 
@@ -127,9 +125,9 @@ public class SignUpActivity extends Activity {
 
     }
 
-    private boolean CheckUserInput(String firstName, String lastName,String Email,String Password){
+    private boolean CheckUserInput(String Email,String Password){
         Log.d(TAG, "CheckUserInput: Checking User Input for null value");
-        if(firstName.equals("") || lastName.equals("") || Email.equals("") || Password.equals("") ){
+        if(Email.equals("") || Password.equals("") ){
             Toast.makeText(mContext,"All fields must be filled out",Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -137,6 +135,78 @@ public class SignUpActivity extends Activity {
         return true;
     }
 
+    public void FirebaseAuthSetup(){
+        Log.d(TAG, "FirebaseAuthSetup: Setting up firebase auth");
+        // Declare FireBase Instance
+        mAuth = FirebaseAuth.getInstance();
+        // Declare FireBase Database Instance
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        // Get FireBase Database Reference
+        myRef = mFirebaseDatabase.getReference();
+
+        mAuthListner = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                // Get User First Name and Last Name.
+                firstname = firstNameTxt.getText().toString();
+                lastname = lastNameTxt.getText().toString();
+
+                Log.d(TAG, "onAuthStateChanged: User Name : " + firstname);
+                Log.d(TAG, "onAuthStateChanged: User Name : " + lastname);
+
+                if(user != null){
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged: Signed in " + user.getUid());
+
+                    // Take Peak of the snapshot. Run only once.
+                    myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            // If Successful
+                            firebaseUtilities.RegisterNewUser(email,firstname,lastname);
+
+                            Toast.makeText(mContext,"Registration Successfully Done",Toast.LENGTH_SHORT).show();
+
+                            // Sign Out User
+                            mAuth.signOut();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // If not Successful
+                            Toast.makeText(mContext,"Registration Failed",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    // End activity and return back to login screen.
+                    finish();
+
+                }else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged: Signed Out");
+                }
+            }
+        };
+
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // look for user Auth on start
+        mAuth.addAuthStateListener(mAuthListner);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mAuthListner != null){
+            // Stop and remove Auth listener
+            mAuth.removeAuthStateListener(mAuthListner);
+        }
+    }
 
 
 

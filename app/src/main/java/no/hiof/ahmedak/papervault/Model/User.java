@@ -5,7 +5,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String eMail;
-    private String password;
+    private String user_id;
 
 
 
@@ -14,19 +14,22 @@ public class User {
 
     }
 
-    public User(String FirstName,String LastName, String Mail,String Password) {
-
-        this.firstName = FirstName;
-        this.lastName = LastName;
-        this.eMail = Mail;
-        this.password = Password;
+    public User(String firstName, String lastName, String eMail, String user_id) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.eMail = eMail;
+        this.user_id = user_id;
     }
 
+    public String getUser_id() {
+        return user_id;
+    }
 
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
 
-
-
-    // Getter And Setter for our Class.
+// Getter And Setter for our Class.
 
     public String getFirstName() {
         return firstName;
@@ -38,10 +41,6 @@ public class User {
 
     public String geteMail() {
         return eMail;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
 
@@ -57,9 +56,6 @@ public class User {
         this.eMail = eMail;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @Override
     public String toString() {
@@ -67,7 +63,7 @@ public class User {
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", eMail='" + eMail + '\'' +
-                ", password='" + password + '\'' +
+                ", user_id='" + user_id + '\'' +
                 '}';
     }
 }
