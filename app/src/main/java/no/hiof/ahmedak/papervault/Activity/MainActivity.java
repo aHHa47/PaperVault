@@ -2,12 +2,17 @@ package no.hiof.ahmedak.papervault.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,8 +27,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TableLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.TextView;;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,13 +35,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import no.hiof.ahmedak.papervault.Adapters.ContnentMainAdapter;
+import no.hiof.ahmedak.papervault.Adapters.SectionsPageAdapter;
 import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
 import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
@@ -45,28 +51,31 @@ import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    RecyclerView mRecyclerView;
-    RecyclerView.LayoutManager mLayoutManager;
-    RecyclerView.Adapter mAdapter;
-    TableLayout tableLayout;
-
-    private final String TAG = "";
-
-    private Context mContext;
-
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListner;
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference myRef;
-    private FirebaseUtilities firebaseUtilities;
-    private TextView profileName;
-    private TextView profileEmail;
+   private RecyclerView mRecyclerView;
+   private RecyclerView.LayoutManager mLayoutManager;
+   private RecyclerView.Adapter mAdapter;
+   private TableLayout tableLayout;
+   private final String TAG = "";
+   private static final int REQUEST_TAKE_PHOTO = 1;
+   private String mCurrentPhotoPath;
+   private Uri photoURI;
+   private File ImageFile;
+   private Context mContext;
+   private FirebaseAuth mAuth;
+   private FirebaseAuth.AuthStateListener mAuthListner;
+   private FirebaseDatabase firebaseDatabase;
+   private DatabaseReference myRef;
+   private FirebaseUtilities firebaseUtilities;
+   private TextView profileName;
+   private TextView profileEmail;
+   private SectionsPageAdapter sectionsPageAdapter;
 
     // Temp
 
     private ArrayList<Integer> mData;
 
-
+    public MainActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +84,7 @@ public class MainActivity extends AppCompatActivity
 
         // Init FirebaseAuth
         FirebaseAuthSetup();
+
 
 
         firebaseUtilities = new FirebaseUtilities(getApplicationContext());
@@ -90,6 +100,8 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                CreatNewReceiptSetup();
             }
         });
 
@@ -150,10 +162,68 @@ public class MainActivity extends AppCompatActivity
             Price.setText((299*(x+1))+ " Kr");
             tableLayout.addView(tableRowView);
 
-
-
         }
 
+    }
+
+
+    // Create new
+    private void CreatNewReceiptSetup() {
+
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if(intent.resolveActivity(getPackageManager())!= null) {
+            File mfile = null;
+            try {
+                mfile = CreateImageFile();
+
+            } catch (IOException e) {
+                Log.d(TAG, "CreatNewReceiptSetup: NullPointerException" + e.getMessage());
+            }
+
+            // Continue only if the File was successfully created
+            if (mfile != null) {
+                photoURI = FileProvider.getUriForFile(getApplicationContext(), "no.hiof.ahmedak.papervault.fileprovider", mfile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+            }
+        }
+
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //TODO: Change to Fragment
+        // TODO: Change Main activity content layout to Container for Fragment.
+        Intent nextActivity = new Intent(this,NewReceiptFragment.class);
+        nextActivity.putExtra("filePath", mCurrentPhotoPath);
+
+        startActivity(nextActivity);
+        //FragmentManager manager = getSupportFragmentManager();
+        //sectionsPageAdapter = new SectionsPageAdapter(manager);
+        //sectionsPageAdapter.addFragment(new NewReceiptFragment(),getString(R.string.new_receipts_header));
+
+    }
+
+    /**
+     * Create Image File
+     * @return Image File
+     * @throws IOException
+     */
+    private File CreateImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        ImageFile = null;
+        ImageFile = File.createTempFile( imageFileName,".jpg", storageDir);
+
+        mCurrentPhotoPath = ImageFile.getAbsolutePath();
+        return ImageFile;
     }
 
     // When Back Button is Pressed
@@ -283,8 +353,6 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 Log.d(TAG, "onDataChange: Displaying User info");
-                Log.d(TAG, "onDataChange: User info: " + firebaseUtilities.getUsersInformation(dataSnapshot).toString());
-
                 // Get User Information From Database.
                 User user = firebaseUtilities.getUsersInformation(dataSnapshot);
                 profileEmail.setText(user.geteMail());
@@ -301,6 +369,8 @@ public class MainActivity extends AppCompatActivity
         });
 
     }
+
+
 
 
     @Override
