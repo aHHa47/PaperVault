@@ -4,9 +4,7 @@
     <color name="colorPrimary">#0277bd</color>
     <color name="colorPrimaryDark">#004c8c</color>
     <color name="colorPrimaryLight">#58a5f0</color>
-    <color name="colorPrimaryText">#ffffff</color>
     <color name="colorSecondary">#ef6c00</color>
     <color name="colorSecondaryDark">#b53d00</color>
     <color name="colorSecondaryLight">#ff9d3f</color>
-    <color name="colorSecondaryText">#000000</color>
 </resources>

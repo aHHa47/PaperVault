@@ -1,11 +1,17 @@
 package no.hiof.ahmedak.papervault.Utilities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,8 +20,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 
+import no.hiof.ahmedak.papervault.Activity.MainActivity;
+import no.hiof.ahmedak.papervault.Model.Receipt;
 import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
 
@@ -29,12 +42,16 @@ public class FirebaseUtilities {
     private static final String TAG = "FirebaseUtilities";
 
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListner;
     private Context mContext;
     private String UserID;
     private User user;
     private FirebaseDatabase mfirebaseDatabase;
     private DatabaseReference myRef;
+    private StorageReference storageReference;
+
+    private String ImageStorgePath = "photos/users/";
+    private double photoUploadProgress = 0;
+
 
     public FirebaseUtilities(Context context){
         mContext = context;
@@ -43,6 +60,8 @@ public class FirebaseUtilities {
         mfirebaseDatabase = FirebaseDatabase.getInstance();
         // Get FireBase Database Reference
         myRef = mfirebaseDatabase.getReference();
+
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         if(mAuth.getCurrentUser() != null){
             UserID = mAuth.getCurrentUser().getUid();
@@ -118,9 +137,13 @@ public class FirebaseUtilities {
         myRef.child(mContext.getString(R.string.dbname_Users)).child(UserID).setValue(user);
 
 
-
     }
 
+    /**
+     * Gets User Information from @param
+     * @param snapshot
+     * @return user
+     */
     public User getUsersInformation(DataSnapshot snapshot){
         Log.d(TAG, "getUsersInformation: Getting user information from FireBase Database");
 
@@ -131,7 +154,6 @@ public class FirebaseUtilities {
         for(DataSnapshot ds: snapshot.getChildren()){
             if(ds.getKey().equals(mContext.getString(R.string.dbname_Users))){
                 Log.d(TAG, "getUsersInformation: Datasnapshot:" + ds);
-                Log.d(TAG, "getUsersInformation: Datasnapshot Email:" + ds.child(UserID).getValue(User.class).geteMail());
 
                 try{
                     user.seteMail(ds.child(UserID).getValue(User.class).geteMail());
@@ -144,9 +166,6 @@ public class FirebaseUtilities {
                     Log.d(TAG, "getUsersInformation: NullPointerException" + e.getMessage());
                 }
 
-
-
-
             }
 
         }
@@ -155,6 +174,121 @@ public class FirebaseUtilities {
     }
 
 
+    /**
+     * Return count for all receipt in @param
+     * @param dataSnapshot
+     * @return
+     */
+    public int GetRceieptImageCount(DataSnapshot dataSnapshot){
+
+        int count = 0;
+        for (DataSnapshot ds: dataSnapshot.child(mContext.getString(R.string.dbname_receipt)).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getChildren()){
+
+            count++;
+        }
+
+        return count;
+
+    }
+
+
+    /**
+     * Upload Image to FireBase
+     * Register new Receipt
+     * @param imagepath
+     * @param count
+     * @param title
+     * @param date
+     * @param price
+     */
+    public void UploadReceiptImage(final String imagepath , int count , final String title, final String date, final double price){
+
+        String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        storageReference = storageReference.child(ImageStorgePath + "/" + user_id + "/photo" + (count + 1));
+        Bitmap bitmap = ImageUtils.getBitmap(imagepath);
+
+
+        byte[] getBytes = ImageUtils.ConvertByteFromBitmap(bitmap, 100);
+        final UploadTask uploadTask = storageReference.putBytes(getBytes);
+
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                final Task<Uri> taskUri = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+
+                        if(!task.isSuccessful()){
+                            throw task.getException();
+                        }
+
+                        return storageReference.getDownloadUrl();
+
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+
+                        if(task.isSuccessful()){
+
+                            Uri fireBaseUri = task.getResult();
+
+                            RegisterNewReceipt(fireBaseUri.toString(),title,date,price);
+                            // send user back to MainActivity
+                            Intent intent = new Intent(mContext,MainActivity.class);
+                            mContext.startActivity(intent);
+
+                        }
+
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Toast.makeText(mContext,"Failed to Upload Photo", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                double progress = (100*taskSnapshot.getBytesTransferred())/taskSnapshot.getTotalByteCount();
+
+                // Print out our uploading progress
+                // if progress is higher than 15, then we print our our progress.
+                if(progress - 15 > photoUploadProgress){
+                    Toast.makeText(mContext,"Photo Upload Progress: " + String.format("%.0f",progress) + "%",Toast.LENGTH_SHORT).show();
+                    photoUploadProgress = progress;
+                }
+        }
+        });
+
+
+    }
+
+
+    /**
+     * Register new User Receipt
+     * @param ImageUrl
+     * @param title
+     * @param date
+     * @param price
+     */
+    public void RegisterNewReceipt(String ImageUrl, String title, String date, double price){
+
+        String Photo_id = myRef.child(mContext.getString(R.string.dbname_photo)).push().getKey();
+
+        Receipt receipt = new Receipt();
+        receipt.setReceipt_title(title);
+        receipt.setImage_path(ImageUrl);
+        receipt.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        receipt.setReceipt_id(Photo_id);
+        receipt.setReceipt_date(date);
+        receipt.setAmount(price);
+
+        myRef.child(mContext.getString(R.string.dbname_receipt)).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(Photo_id).setValue(receipt);
+    }
 
 
 

@@ -9,10 +9,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,15 +39,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import no.hiof.ahmedak.papervault.Adapters.ContnentMainAdapter;
 import no.hiof.ahmedak.papervault.Adapters.SectionsPageAdapter;
 import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
 import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
+import no.hiof.ahmedak.papervault.Utilities.permissions;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
 
    private RecyclerView mRecyclerView;
    private RecyclerView.LayoutManager mLayoutManager;
@@ -68,11 +71,13 @@ public class MainActivity extends AppCompatActivity
    private FirebaseUtilities firebaseUtilities;
    private TextView profileName;
    private TextView profileEmail;
-   private SectionsPageAdapter sectionsPageAdapter;
+   private permissions perms;
+   private static final int CAMERA_PERMS_REQUEST_CODE= 208;
 
     // Temp
-
     private ArrayList<Integer> mData;
+
+
 
     public MainActivity() {
     }
@@ -82,28 +87,16 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Init FirebaseAuth
+        mContext = MainActivity.this;
+        // Init methods
         FirebaseAuthSetup();
-
-
-
         firebaseUtilities = new FirebaseUtilities(getApplicationContext());
-
+        OpenCamera();
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Floating Action Button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                CreatNewReceiptSetup();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -129,7 +122,7 @@ public class MainActivity extends AppCompatActivity
         }
         
         // RecycleView
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycle_view_content_main);
+        mRecyclerView = findViewById(R.id.recycle_view_content_main);
         mRecyclerView.setHasFixedSize(true);
 
         // RecycleView Manager
@@ -144,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
 
         //Table Layout
-        tableLayout = (TableLayout) findViewById(R.id.table_lay_out);
+        tableLayout = findViewById(R.id.table_lay_out);
 
         // TODO: Change to database
         for (int x = 0; x < 40; x++) {
@@ -167,9 +160,37 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    // Create new
-    private void CreatNewReceiptSetup() {
+    /**
+     * Camera
+     * Open Camera And send file path to New Receipt Activity.
+     */
+    private void OpenCamera(){
 
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: Open Camera");
+                CreatNewReceiptSetup();
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Send Image Path to New Receipt Activity.
+        Intent intent = new Intent(mContext,NewReceiptActivity.class);
+        intent.putExtra(getString(R.string.Image_path),mCurrentPhotoPath);
+        startActivity(intent);
+
+    }
+
+
+    // Create new Receipt
+    private void CreatNewReceiptSetup() {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -189,24 +210,6 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(intent, REQUEST_TAKE_PHOTO);
             }
         }
-
-
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        //TODO: Change to Fragment
-        // TODO: Change Main activity content layout to Container for Fragment.
-        Intent nextActivity = new Intent(this,NewReceiptFragment.class);
-        nextActivity.putExtra("filePath", mCurrentPhotoPath);
-
-        startActivity(nextActivity);
-        //FragmentManager manager = getSupportFragmentManager();
-        //sectionsPageAdapter = new SectionsPageAdapter(manager);
-        //sectionsPageAdapter.addFragment(new NewReceiptFragment(),getString(R.string.new_receipts_header));
-
     }
 
     /**
@@ -224,6 +227,21 @@ public class MainActivity extends AppCompatActivity
 
         mCurrentPhotoPath = ImageFile.getAbsolutePath();
         return ImageFile;
+    }
+
+
+    /**
+     * EasyPermissions, Returns Requested Permissions from @param
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults,this);
     }
 
     // When Back Button is Pressed
@@ -370,9 +388,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -388,4 +403,6 @@ public class MainActivity extends AppCompatActivity
             mAuth.removeAuthStateListener(mAuthListner);
         }
     }
+
+
 }

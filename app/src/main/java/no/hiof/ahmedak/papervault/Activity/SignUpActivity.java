@@ -39,6 +39,8 @@ public class SignUpActivity extends Activity {
     private String firstname, lastname,email,password;
     private Context mContext;
     private String UserID;
+
+    // Firebase
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListner;
     private User users;

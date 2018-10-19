@@ -1,22 +1,27 @@
 package no.hiof.ahmedak.papervault.Adapters;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import com.bumptech.glide.Glide;
 import java.util.ArrayList;
-
 import no.hiof.ahmedak.papervault.R;
+
 
 public class ReceiptsAdapter extends RecyclerView.Adapter<ReceiptsAdapter.MyViewHolder> {
 
-    ArrayList<Integer>TempData;
+    ArrayList<String>ImageUrls;
+    private Context mContext;
 
-    public ReceiptsAdapter(ArrayList<Integer> tempData){
-        this.TempData = tempData;
+    public ReceiptsAdapter(ArrayList<String> url){
+        this.ImageUrls = url;
     }
 
 
@@ -27,17 +32,21 @@ public class ReceiptsAdapter extends RecyclerView.Adapter<ReceiptsAdapter.MyView
 
         MyViewHolder viewHolder = new MyViewHolder(v);
 
+        mContext = v.getContext();
+
+
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ReceiptsAdapter.MyViewHolder myViewHolder, int position) {
-            myViewHolder.imageView.setImageResource(TempData.get(position));
+
+        Glide.with(mContext).load(ImageUrls.get(position)).into(myViewHolder.imageView);
     }
 
     @Override
     public int getItemCount() {
-        return TempData.size();
+        return ImageUrls.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
