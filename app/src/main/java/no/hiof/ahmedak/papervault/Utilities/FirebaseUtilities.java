@@ -29,6 +29,7 @@ import com.google.firebase.storage.UploadTask;
 
 import no.hiof.ahmedak.papervault.Activity.MainActivity;
 import no.hiof.ahmedak.papervault.Model.Receipt;
+import no.hiof.ahmedak.papervault.Model.Store;
 import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
 
@@ -201,7 +202,7 @@ public class FirebaseUtilities {
      * @param date
      * @param price
      */
-    public void UploadReceiptImage(final String imagepath , int count , final String title, final String date, final double price){
+    public void UploadReceiptImage(final String imagepath , int count , final String title, final String date, final double price, final String store_id){
 
         String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         storageReference = storageReference.child(ImageStorgePath + "/" + user_id + "/photo" + (count + 1));
@@ -233,7 +234,7 @@ public class FirebaseUtilities {
 
                             Uri fireBaseUri = task.getResult();
 
-                            RegisterNewReceipt(fireBaseUri.toString(),title,date,price);
+                            RegisterNewReceipt(fireBaseUri.toString(),title,date,price, store_id);
                             // send user back to MainActivity
                             Intent intent = new Intent(mContext,MainActivity.class);
                             mContext.startActivity(intent);
@@ -275,7 +276,7 @@ public class FirebaseUtilities {
      * @param date
      * @param price
      */
-    public void RegisterNewReceipt(String ImageUrl, String title, String date, double price){
+    public void RegisterNewReceipt(String ImageUrl, String title, String date, double price, String store_id){
 
         String Photo_id = myRef.child(mContext.getString(R.string.dbname_photo)).push().getKey();
 
@@ -286,8 +287,36 @@ public class FirebaseUtilities {
         receipt.setReceipt_id(Photo_id);
         receipt.setReceipt_date(date);
         receipt.setAmount(price);
+        receipt.setStore_id(store_id);
 
-        myRef.child(mContext.getString(R.string.dbname_receipt)).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(Photo_id).setValue(receipt);
+        myRef.child(mContext.getString(R.string.dbname_receipt)).child(Photo_id).setValue(receipt);
+    }
+
+
+    /**
+     * Register New Store
+     * @param Name
+     * @param Retail
+     * @param Logo
+     * @param lat
+     * @param lon
+     */
+    public void RegisterNewStore(String Name, String Retail,String Logo, long lat,long lon){
+
+        // Getting Store Logo ID.
+        String Logo_id = myRef.child(mContext.getString(R.string.dbname_store)).push().getKey();
+
+        Store store = new Store();
+        store.setStore_name(Name);
+        store.setStore_retail(Retail);
+        store.setStore_logo(Logo);
+        store.setStore_id(Logo_id);
+        store.setStore_lat(lat);
+        store.setStore_long(lon);
+
+
+        myRef.child(mContext.getString(R.string.dbname_store)).child(Logo_id).setValue(store);
+
     }
 
 

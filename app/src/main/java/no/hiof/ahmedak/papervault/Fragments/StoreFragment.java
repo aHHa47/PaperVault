@@ -3,11 +3,13 @@ package no.hiof.ahmedak.papervault.Fragments;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import java.util.ArrayList;
 
@@ -19,12 +21,15 @@ import no.hiof.ahmedak.papervault.R;
  * A simple {@link Fragment} subclass.
  */
 public class StoreFragment extends android.support.v4.app.Fragment {
+    private static final String TAG = "StoreFragment";
 
-    RecyclerView StoreTabRecycleView;
-    RecyclerView.LayoutManager mlayoutManager;
-    RecyclerView.Adapter madapter;
+    private RecyclerView StoreTabRecycleView;
+    private RecyclerView.LayoutManager mlayoutManager;
+    private RecyclerView.Adapter madapter;
 
-    ArrayList<Integer> Data;
+    private FloatingActionButton fab;
+
+    private ArrayList<Integer> Data;
 
     public StoreFragment() {
         // Required empty public constructor
@@ -45,6 +50,15 @@ public class StoreFragment extends android.support.v4.app.Fragment {
 
         }
 
+        fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddnewStore();
+            }
+        });
+
+
         // Recycle View Store Tab
         StoreTabRecycleView = view.findViewById(R.id.Store_Tab_RecycleView);
         StoreTabRecycleView.setHasFixedSize(true);
@@ -59,12 +73,17 @@ public class StoreFragment extends android.support.v4.app.Fragment {
         madapter = new StoreAdapter(Data);
         StoreTabRecycleView.setAdapter(madapter);
 
-
-
-
-
-
         return  view;
+    }
+
+
+    /**
+     * Open Add new store Dialog
+     */
+    private void AddnewStore(){
+        StoreDialogFragment storeDialogFragment = new StoreDialogFragment();
+        storeDialogFragment.show(getFragmentManager(), "AddnewStoreDialog");
+
     }
 
 }

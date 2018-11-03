@@ -22,11 +22,6 @@
     <string name="sort_list">Sort list</string>
     <string name="my_receipts_text">My Receipts</string>
 
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-
-    <!-- Example settings for Data & Sync -->
 
     <!-- Example settings for Notifications -->
 
@@ -56,11 +51,25 @@
     <string name="dbname_Users">users</string>
     <string name="dbname_photo">photos</string>
     <string name="dbname_receipt">receipt</string>
+    <string name="dbname_store">store</string>
 
+
+    <!--Strings related to Bundles-->
+    <string name="receipt">Receipt</string>
+    <string name="Activity_number">Activity_number</string>
+
+
+    <!--Strings related to Fragment-->
+    <string name="receipt_info_view_fragment">Receipt Info</string>
 
     <!--Strings related to Permissions-->
     <string name="camera_permissions">This app need permission to use the camera built in this phone.</string>
-
+    <string name="Logo_name">Logo_name</string>
+    <string name="logo_img_path">logo_img_path</string>
+    <string name="logo_domain">logo_domain</string>
+    <string name="name">name</string>
+    <string name="logo">logo</string>
+    <string name="domain">domain</string>
 
 
 </resources>

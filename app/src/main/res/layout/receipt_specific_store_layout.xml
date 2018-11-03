@@ -18,50 +18,50 @@
 
 
         <!--CardView Image-->
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/relaOut1">
-        <ImageView
-            android:id="@+id/All_Receipts_Tab_Image"
-            android:layout_margin="10dp"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:padding="5dp"/>
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/relaOut1">
+            <ImageView
+                android:id="@+id/All_Receipts_Tab_Image"
+                android:layout_margin="10dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:padding="5dp"/>
+        </RelativeLayout>
 
 
         <!--CardView Header-->
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/relaOut2"
-        android:layout_toRightOf="@id/relaOut1"
-        android:layout_marginBottom="8dp">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/relaOut2"
+            android:layout_toRightOf="@id/relaOut1"
+            android:layout_marginBottom="8dp">
 
-        <TextView
-            android:id="@+id/CardView_Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="This is a title "
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="18dp"
-            android:padding="5dp"
-            android:layout_centerVertical="true"/>
-        <TextView
-            android:id="@+id/CardView_Date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="26.08.2018"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:padding="5dp"
-            android:textStyle="bold"
-            android:layout_centerVertical="true"
-            />
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/CardView_Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="This is a title "
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:padding="5dp"
+                android:layout_centerVertical="true"/>
+            <TextView
+                android:id="@+id/CardView_Date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="26.08.2018"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                />
+        </RelativeLayout>
 
         <!--CardView Location-->
 
@@ -145,7 +145,7 @@
                 android:id="@+id/CardView_FavoriteBtn"
                 android:layout_marginEnd="20dp"
                 android:layout_marginStart="30dp"
-               />
+                />
             <ImageButton
                 android:layout_width="30dp"
                 android:layout_height="30dp"

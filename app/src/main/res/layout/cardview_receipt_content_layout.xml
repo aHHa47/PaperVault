@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/relaOut1"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/Receipt_img"
+                    android:layout_width="350dp"
+                    android:layout_height="350dp"
+                    android:layout_centerHorizontal="true"
+                    />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/relaOut2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relaOut1">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relaOut2_1"
+                    >
+
+                    <TextView
+                        android:id="@+id/Receipt_info_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:text="Receipt Info"
+                        android:gravity="center"
+                        android:background="@color/colorSecondary"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/white"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ReceiptName_textview"
+                        android:text="Elkjøp I Halden"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginStart="30dp"
+                        android:padding="10dp"
+                        android:layout_below="@id/Receipt_info_label"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ReceiptDate_textview"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center"
+                        android:text="26.08.2018"
+                        android:layout_marginEnd="30dp"
+                        android:padding="10dp"
+                        android:layout_below="@id/Receipt_info_label"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/relaOut2_2"
+                    android:layout_below="@id/relaOut2_1"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Receiptlocation_textview"
+                        android:text="Elkjøp, Halden"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginStart="30dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ReceiptPrice_textview"
+                        android:layout_alignParentRight="true"
+                        android:gravity="center"
+                        android:text="399;-"
+                        android:layout_marginEnd="30dp"/>
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relaOut3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relaOut2">
+                <TextView
+                    android:id="@+id/OCR_Read_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:text="OCR Read"
+                    android:gravity="center"
+                    android:background="@color/colorSecondary"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy
+                    text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                    It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                    It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
+                     and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+                    android:gravity="center"
+                    android:layout_below="@id/OCR_Read_label"
+                    android:padding="10dp"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+        
+        
+    </ScrollView>
+
+</RelativeLayout>

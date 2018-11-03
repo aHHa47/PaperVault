@@ -13,7 +13,8 @@ import no.hiof.ahmedak.papervault.R;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHolder> {
 
-    ArrayList<Integer> TempData;
+    private static final String TAG = "StoreAdapter";
+    private ArrayList<Integer> TempData;
 
 
     public StoreAdapter(ArrayList<Integer> tempData ){

@@ -1,6 +1,7 @@
 package no.hiof.ahmedak.papervault.Fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
@@ -10,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +27,6 @@ import java.util.ArrayList;
 import no.hiof.ahmedak.papervault.Adapters.ReceiptsAdapter;
 import no.hiof.ahmedak.papervault.Model.Receipt;
 import no.hiof.ahmedak.papervault.R;
-import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 
 
 /**
@@ -33,12 +35,17 @@ import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 public class AllReceiptsFragment extends android.support.v4.app.Fragment {
 
     private static final String TAG = "AllReceiptsFragment";
+    private static  final int ACTIVITY_NUMBER = 4;
     private RecyclerView AllReceiptsRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
+    private ImageButton DeleteBtn, HeartBtn, ShareBtn;
 
-    private ArrayList<Integer> TempData;
+    private OnCardViewSelectedListner onCardViewSelectedListner;
 
+    public interface OnCardViewSelectedListner{
+        void OnCardViewSelected(Receipt receipt,int ActivityNumber);
+    }
 
     public AllReceiptsFragment() {
         // Required empty public constructor
@@ -52,14 +59,15 @@ public class AllReceiptsFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_all_receipts, container, false);
 
+
         // RecycleView All Receipts Tab
         AllReceiptsRecyclerView = view.findViewById(R.id.All_Receipts_RecycleView);
         AllReceiptsRecyclerView.setHasFixedSize(true);
-
-        // RecycleView Manager
-
-
+        // Init Methods
         DisplayReceipts();
+        //CardViewButtonsInit(view);
+
+
 
         return view;
 
@@ -67,10 +75,51 @@ public class AllReceiptsFragment extends android.support.v4.app.Fragment {
     }
 
 
+    /**
+     * Init our CardView Button methods
+     * @param view
+     */
+    private void CardViewButtonsInit(View view){
+        Log.d(TAG, "CardViewButtonsInit: ");
+        // Favorite Button
+        HeartBtn = view.findViewById(R.id.CardView_FavoriteBtn);
+        HeartBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddToFavoriteTab();
+            }
+        });
+
+        // Delete Button
+        DeleteBtn = view.findViewById(R.id.CardView_DeleteBtn);
+        DeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteSelectedReceipt();
+            }
+        });
+
+
+        // Share Button
+        ShareBtn = view.findViewById(R.id.CardView_ShareBtn);
+        ShareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShareReceipt();
+            }
+        });
+    }
+
+
+
+    /**
+     * Display All receipts to CardView List
+     */
     private void DisplayReceipts(){
-        Log.d(TAG, "DisplayReceipts: Displaying Images from database");
+        Log.d(TAG, "DisplayReceipts: Displaying Receipts from database");
 
         final ArrayList<Receipt> receipts = new ArrayList<>();
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
         // query our database for user receipts
@@ -83,20 +132,18 @@ public class AllReceiptsFragment extends android.support.v4.app.Fragment {
                     receipts.add(SingleDs.getValue(Receipt.class));
                 }
 
-
-                ArrayList<String> imgUrl = new ArrayList<>();
-
-                for (int i = 0; i < receipts.size(); i++) {
-                    imgUrl.add(receipts.get(i).getImage_path());
-                    Log.d(TAG, "onDataChange: ImageUrls" + imgUrl.get(i));
-
-                }
-
+                // RecycleView layout Manager
                 mLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
                 AllReceiptsRecyclerView.setLayoutManager(mLayoutManager);
-                // RecycleView Adapter
 
-                mAdapter = new ReceiptsAdapter(imgUrl);
+                // RecycleView Adapter
+                mAdapter = new ReceiptsAdapter(getContext(),receipts, new ReceiptsAdapter.RecyclerViewClickListener() {
+                    @Override
+                    public void onClick(View view, int position) {
+                        Toast.makeText(getContext(),receipts.get(position).getReceipt_title() + " Clicked",Toast.LENGTH_SHORT).show();
+                        onCardViewSelectedListner.OnCardViewSelected(receipts.get(position),ACTIVITY_NUMBER);
+                    }
+                });
                 AllReceiptsRecyclerView.setAdapter(mAdapter);
 
             }
@@ -110,6 +157,40 @@ public class AllReceiptsFragment extends android.support.v4.app.Fragment {
 
     }
 
+
+
+    @Override
+    public void onAttach(Context context) {
+        try {
+            onCardViewSelectedListner = (OnCardViewSelectedListner) getActivity();
+        }catch (ClassCastException e){
+            Log.d(TAG, "onAttach: ClassCastException " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        super.onAttach(context);
+    }
+
+    /**
+     * Share receipt
+     */
+    private void ShareReceipt() {
+        Log.d(TAG, "ShareReceipt: Sharing Receipt ");
+    }
+
+    /**
+     * Delete Selected Receipts
+     */
+    private void DeleteSelectedReceipt() {
+        Log.d(TAG, "DeleteSelectedReceipt: Deleting Receipts ");
+    }
+
+    /**
+     * Add receipts to Favorite Tab
+     */
+    private void AddToFavoriteTab() {
+        Log.d(TAG, "AddToFavoriteTab: Adding Receipt to Favorite Tab ");
+    }
 
 
 

@@ -17,6 +17,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,7 +39,8 @@ import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 
 public class NewReceiptActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     private static final String TAG = "NewReceiptActivity";
-    private  ImageView mImageView;
+    private  ImageView mImageView, dropDownImg;
+    private TextView dorpDownTxt;
     private Bitmap bitmap;
     private EditText etReceiptName, etLocation,etDate,etprice;
     private Button CalenderBtn, LocationBtn;
@@ -123,6 +125,8 @@ public class NewReceiptActivity extends AppCompatActivity implements DatePickerD
         LocationBtn = findViewById(R.id.locationBtn);
         mFab = findViewById(R.id.fab);
         mSpinner = findViewById(R.id.DropDown_menu_spinner);
+        dorpDownTxt = findViewById(R.id.DropDown_txt);
+        dropDownImg = findViewById(R.id.DropDown_img);
 
     }
 
@@ -134,8 +138,9 @@ public class NewReceiptActivity extends AppCompatActivity implements DatePickerD
         ReceiptAmount = Double.parseDouble(etprice.getText().toString());
 
 
+
         // Uploading new Receipt
-        firebaseUtilities.UploadReceiptImage(ImageUrl,imageCount,ReceiptName, ReceiptDate, ReceiptAmount);
+        //firebaseUtilities.UploadReceiptImage(ImageUrl,imageCount,ReceiptName, ReceiptDate, ReceiptAmount);
 
 
     }

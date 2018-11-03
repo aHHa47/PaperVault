@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relaOut1">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/my_receipt_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:minHeight="?attr/actionBarSize"
+                    android:theme="@style/ThemeOverlay.AppCompat.Light"
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:titleTextColor="@android:color/white"
+                    >
+                </android.support.v7.widget.Toolbar>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relaOut1"
+            android:id="@+id/relaOut2">
+            <android.support.design.widget.TabLayout
+                android:id="@+id/my_receipt_tab_layOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryLight"
+                app:tabSelectedTextColor="@android:color/white"
+                app:tabTextColor="@android:color/black"
+                app:tabIndicatorHeight="5dp">
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tab_item_Store"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/Tab_store"
+                    android:textAlignment="center" />
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tab_item_all_receipts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Tab_all_receipts" />
+
+            </android.support.design.widget.TabLayout>
+        </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relaOut2"
+        android:id="@+id/relaOut3">
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tab_view_pager"/>
+
+    </RelativeLayout>
+</RelativeLayout>

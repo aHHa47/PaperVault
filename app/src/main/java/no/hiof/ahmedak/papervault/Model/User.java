@@ -1,5 +1,6 @@
 package no.hiof.ahmedak.papervault.Model;
 
+
 public class User {
 
     private String firstName;
