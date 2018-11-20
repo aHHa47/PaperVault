@@ -12,11 +12,15 @@ import android.view.View;
 import no.hiof.ahmedak.papervault.Adapters.MyReceiptsPageAdapter;
 import no.hiof.ahmedak.papervault.Fragments.AllReceiptsFragment;
 import no.hiof.ahmedak.papervault.Fragments.ReceiptInfoFragment;
+import no.hiof.ahmedak.papervault.Fragments.StoreDialogFragment;
+import no.hiof.ahmedak.papervault.Fragments.StoreFragment;
+import no.hiof.ahmedak.papervault.Fragments.StoreSpecificReceiptFragment;
 import no.hiof.ahmedak.papervault.Model.Receipt;
+import no.hiof.ahmedak.papervault.Model.Store;
 import no.hiof.ahmedak.papervault.R;
 
 
-public class MyReceipts extends AppCompatActivity implements AllReceiptsFragment.OnCardViewSelectedListner {
+public class MyReceipts extends AppCompatActivity implements AllReceiptsFragment.OnCardViewSelectedListner , StoreFragment.OnCardViewSelectedListner, StoreSpecificReceiptFragment.OnCardViewSelectedListner{
     private static final String TAG = "MyReceiptsActivity";
     private TabLayout tabLayout;
     private Toolbar toolbar;
@@ -73,11 +77,14 @@ public class MyReceipts extends AppCompatActivity implements AllReceiptsFragment
         // sync the viewPager with TabLayout. Tell our view pager on what tab we are at.
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-
-
-
     }
 
+
+    /**
+     * On Selected receipt, navigate to ReceiptInfoFragment
+     * @param receipt
+     * @param ActivityNumber
+     */
     @Override
     public void OnCardViewSelected(Receipt receipt, int ActivityNumber) {
         Log.d(TAG, "OnCardViewSelected: Selected an CardView" + receipt.toString());
@@ -100,4 +107,22 @@ public class MyReceipts extends AppCompatActivity implements AllReceiptsFragment
     public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
+
+    @Override
+    public void OnCardViewSelected(Store store, int ActivityNumber) {
+        StoreSpecificReceiptFragment fragment = new StoreSpecificReceiptFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.store), store);
+        args.putInt(getString(R.string.Activity_number), ActivityNumber);
+
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = MyReceipts.this.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.TabView_Container,fragment);
+        transaction.addToBackStack(getString(R.string.receipt_info_view_fragment));
+        transaction.commit();
+
+    }
+
+
 }

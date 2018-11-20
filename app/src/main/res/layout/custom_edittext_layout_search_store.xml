@@ -36,40 +36,6 @@
                     android:layout_alignParentRight="true"/>
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/relaOut2"
-                android:layout_width="200dp"
-                android:layout_centerHorizontal="true"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/relaOut1">
-                <EditText
-                    android:id="@+id/edittext_Search_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="1dp"
-                    android:hint="Store Location"
-                    android:textSize="15sp"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:clickable="false"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false">
-                </EditText>
-
-                <Button
-                    android:id="@+id/SearchBtn"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/ic_action_location"
-                    android:layout_alignParentRight="true"/>
-            </RelativeLayout>
-
-
-
-
 
         </RelativeLayout>
 

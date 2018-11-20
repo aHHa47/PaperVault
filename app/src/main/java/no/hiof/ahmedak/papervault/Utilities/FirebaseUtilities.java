@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,9 +18,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -27,7 +32,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 
+import java.util.ArrayList;
+
 import no.hiof.ahmedak.papervault.Activity.MainActivity;
+import no.hiof.ahmedak.papervault.Model.Favorite;
 import no.hiof.ahmedak.papervault.Model.Receipt;
 import no.hiof.ahmedak.papervault.Model.Store;
 import no.hiof.ahmedak.papervault.Model.User;
@@ -50,7 +58,7 @@ public class FirebaseUtilities {
     private DatabaseReference myRef;
     private StorageReference storageReference;
 
-    private String ImageStorgePath = "photos/users/";
+    final private String ImageStorgePath = "photos/users/";
     private double photoUploadProgress = 0;
 
 
@@ -133,12 +141,26 @@ public class FirebaseUtilities {
      */
     public void RegisterNewUser(String email, String firstname,String lastname){
         user = new User(firstname,lastname,email,UserID);
+        Log.d(TAG, "RegisterNewUser: New user " + user.getLastName() +" : " +  user.getFirstName() +" : " + UserID);
 
         // Send ref to database node
         myRef.child(mContext.getString(R.string.dbname_Users)).child(UserID).setValue(user);
 
 
     }
+
+    public void RegisterNewUserFromGoogle(String email, String firstname,String lastname, String UserID){
+        user = new User(firstname,lastname,email,UserID);
+        Log.d(TAG, "RegisterNewUser: New user " + user.getLastName() +" : " +  user.getFirstName() +" : " + UserID);
+
+        // Send ref to database node
+        myRef.child(mContext.getString(R.string.dbname_Users)).child(UserID).setValue(user);
+
+
+    }
+
+
+
 
     /**
      * Gets User Information from @param
@@ -161,8 +183,6 @@ public class FirebaseUtilities {
                     user.setFirstName(ds.child(UserID).getValue(User.class).getFirstName());
                     user.setLastName(ds.child(UserID).getValue(User.class).getLastName());
 
-
-
                 }catch (NullPointerException e){
                     Log.d(TAG, "getUsersInformation: NullPointerException" + e.getMessage());
                 }
@@ -183,7 +203,7 @@ public class FirebaseUtilities {
     public int GetRceieptImageCount(DataSnapshot dataSnapshot){
 
         int count = 0;
-        for (DataSnapshot ds: dataSnapshot.child(mContext.getString(R.string.dbname_receipt)).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getChildren()){
+        for (DataSnapshot ds: dataSnapshot.child(mContext.getString(R.string.dbname_receipt)).getChildren()){
 
             count++;
         }
@@ -191,6 +211,8 @@ public class FirebaseUtilities {
         return count;
 
     }
+
+
 
 
     /**
@@ -279,47 +301,69 @@ public class FirebaseUtilities {
     public void RegisterNewReceipt(String ImageUrl, String title, String date, double price, String store_id){
 
         String Photo_id = myRef.child(mContext.getString(R.string.dbname_photo)).push().getKey();
+        String favoriteKey = myRef.push().getKey();
 
         Receipt receipt = new Receipt();
-        receipt.setReceipt_title(title);
-        receipt.setImage_path(ImageUrl);
-        receipt.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        receipt.setReceipt_id(Photo_id);
-        receipt.setReceipt_date(date);
-        receipt.setAmount(price);
-        receipt.setStore_id(store_id);
+        Favorite favorite = new Favorite();
+        if(ImageUrl!= null && title!= null && date!= null  && store_id!= null){
 
-        myRef.child(mContext.getString(R.string.dbname_receipt)).child(Photo_id).setValue(receipt);
+            receipt.setReceipt_title(title);
+            receipt.setImage_path(ImageUrl);
+            receipt.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            receipt.setReceipt_id(Photo_id);
+            receipt.setReceipt_date(date);
+            receipt.setAmount(price);
+            receipt.setStore_id(store_id);
+            receipt.setFavorite(false);
+
+            myRef.child(mContext.getString(R.string.dbname_receipt)).child(Photo_id).setValue(receipt);
+
+        }else {
+
+            Log.d(TAG, "RegisterNewReceipt: Failed to Create New Receipt, All Filed must be filed out");
+            
+        }
+        
+        
     }
 
 
     /**
      * Register New Store
      * @param Name
-     * @param Retail
+     * @param Domain
      * @param Logo
-     * @param lat
-     * @param lon
      */
-    public void RegisterNewStore(String Name, String Retail,String Logo, long lat,long lon){
+    public void RegisterNewStore(String Name, String Domain,String Logo){
 
-        // Getting Store Logo ID.
-        String Logo_id = myRef.child(mContext.getString(R.string.dbname_store)).push().getKey();
+        // Getting Store ID.
+        String Stroe_Id = myRef.child(mContext.getString(R.string.dbname_store)).push().getKey();
 
         Store store = new Store();
         store.setStore_name(Name);
-        store.setStore_retail(Retail);
+        store.setStore_domain(Domain);
         store.setStore_logo(Logo);
-        store.setStore_id(Logo_id);
-        store.setStore_lat(lat);
-        store.setStore_long(lon);
-
-
-        myRef.child(mContext.getString(R.string.dbname_store)).child(Logo_id).setValue(store);
+        store.setStore_id(Stroe_Id);
+        store.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        myRef.child(mContext.getString(R.string.dbname_store)).child(Stroe_Id).setValue(store);
 
     }
 
+    /**
+     * Add Receipts to Favorite
+     */
 
+    public void addReceiptToFavorite(String receiptId){
+        /*Favorite favorite = new Favorite();
+
+        String key = myRef.push().getKey();
+
+        favorite.setLiked(true);*/
+        Boolean liked = true;
+        Receipt receipt = new Receipt();
+        receipt.setFavorite(liked);
+        myRef.child(mContext.getString(R.string.dbname_receipt)).child(receiptId).child(mContext.getString(R.string.favorite)).setValue(receipt);
+    }
 
 
 

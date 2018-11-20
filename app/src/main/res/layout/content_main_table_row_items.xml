@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimaryLight">
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/relaOut2">
         <TextView
             android:id="@+id/StoreName_table_txt"
             android:layout_width="wrap_content"
@@ -20,7 +19,8 @@
             android:textColor="@android:color/white"
             android:textSize="15dp"
             android:textStyle="bold"
-            android:layout_marginEnd="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             />
 
         <TextView
@@ -33,7 +33,8 @@
             android:textColor="@android:color/white"
             android:textSize="15dp"
             android:textStyle="bold"
-            android:layout_marginEnd="20dp"/>
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
 
         <TextView
             android:id="@+id/Price_table_txt"
@@ -44,61 +45,11 @@
             android:text="@string/Table_Price_Title"
             android:textColor="@android:color/white"
             android:textSize="15dp"
-            android:textStyle="bold" />
-
-
-
-
-        <!--<TextView
-            android:id="@+id/StoreName_table_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:padding="5dip"
-            android:text="Store"
-            android:textColor="@android:color/white"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:layout_alignParentLeft="true"/>
-
-        <TextView
-            android:id="@+id/Date_table_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:padding="5dip"
-            android:text="Date"
-            android:textColor="@android:color/white"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/StoreName_table_txt"
-            android:layout_alignLeft="@id/Price_table_txt"/>
-
-        <TextView
-            android:id="@+id/Price_table_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
-            android:gravity="center"
-            android:text="Price"
-            android:padding="5dip"
-            android:textColor="@android:color/white"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/Da"
-            />-->
-
-
-    </LinearLayout>
+            android:textStyle="bold"
+            android:layout_toRightOf="@id/Date_table_txt"
+            android:layout_marginStart="40dp"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
 
 
 </TableRow>

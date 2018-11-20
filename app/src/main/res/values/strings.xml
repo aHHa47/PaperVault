@@ -13,6 +13,7 @@
     <string name="action_info">Info</string>
     <string name="Tab_store">Store</string>
     <string name="Tab_all_receipts">All Receipts</string>
+    <string name="loading">loading</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="sort_near_me_list">Sort receipts list for stores that are near you</string>
@@ -52,10 +53,28 @@
     <string name="dbname_photo">photos</string>
     <string name="dbname_receipt">receipt</string>
     <string name="dbname_store">store</string>
+    <string name="user_id">user_id</string>
+    <string name="receipts">receipts</string>
+    <string name="Logo_name">Logo_name</string>
+    <string name="logo_img_path">logo_img_path</string>
+    <string name="logo_domain">logo_domain</string>
+    <string name="name">name</string>
+    <string name="logo">logo</string>
+    <string name="domain">domain</string>
+    <string name="store_name">Store Name</string>
+    <string name="store_id">store_id</string>
+    <string name="receipt_id">receipt_id</string>
+    <string name="amount">amount</string>
+    <string name="receipt_title">receipt_title</string>
+    <string name="receipt_date">receipt_date</string>
+    <string name="image_path">image_path</string>
+    <string name="favorite">favorite</string>
+
 
 
     <!--Strings related to Bundles-->
     <string name="receipt">Receipt</string>
+    <string name="store">Store</string>
     <string name="Activity_number">Activity_number</string>
 
 
@@ -64,12 +83,7 @@
 
     <!--Strings related to Permissions-->
     <string name="camera_permissions">This app need permission to use the camera built in this phone.</string>
-    <string name="Logo_name">Logo_name</string>
-    <string name="logo_img_path">logo_img_path</string>
-    <string name="logo_domain">logo_domain</string>
-    <string name="name">name</string>
-    <string name="logo">logo</string>
-    <string name="domain">domain</string>
+
 
 
 </resources>

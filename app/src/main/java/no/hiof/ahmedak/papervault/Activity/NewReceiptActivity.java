@@ -12,6 +12,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -22,17 +24,22 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.nio.channels.SelectableChannel;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import no.hiof.ahmedak.papervault.Adapters.StoreSpinnerAdapter;
 import no.hiof.ahmedak.papervault.Fragments.CalenderFragment;
+import no.hiof.ahmedak.papervault.Model.Store;
 import no.hiof.ahmedak.papervault.R;
 import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 
@@ -45,18 +52,24 @@ public class NewReceiptActivity extends AppCompatActivity implements DatePickerD
     private EditText etReceiptName, etLocation,etDate,etprice;
     private Button CalenderBtn, LocationBtn;
     private FloatingActionButton mFab;
-    private Spinner mSpinner;
     private Context mContext;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListner;
     private FirebaseUtilities firebaseUtilities;
     private DatabaseReference myRef;
 
+    private Spinner mSpinner;
+    private StoreSpinnerAdapter storeSpinnerAdapter;
+    private ArrayList<Store> stores;
+
+
     private int imageCount = 0;
     private String ImageUrl;
     private String ReceiptName;
     private String ReceiptDate;
     private double ReceiptAmount;
+    private String store_id;
+
 
 
     @Override
@@ -76,7 +89,7 @@ public class NewReceiptActivity extends AppCompatActivity implements DatePickerD
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Creating new receipt");
                 Toast.makeText(mContext,"Creating new Receipt",Toast.LENGTH_SHORT).show();
-
+                // Initializing Receipt Register
                 initialize();
 
             }
@@ -89,6 +102,21 @@ public class NewReceiptActivity extends AppCompatActivity implements DatePickerD
                 calenderPicker.show(getSupportFragmentManager(),getString(R.string.date_picker));
             }
         });
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Getting selected Store ID From Drop Down menu
+                store_id = stores.get(position).getStore_id();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
 
     }
 
@@ -137,10 +165,8 @@ public class NewReceiptActivity extends AppCompatActivity implements DatePickerD
         ReceiptDate = etDate.getText().toString();
         ReceiptAmount = Double.parseDouble(etprice.getText().toString());
 
-
-
-        // Uploading new Receipt
-        //firebaseUtilities.UploadReceiptImage(ImageUrl,imageCount,ReceiptName, ReceiptDate, ReceiptAmount);
+        // Register new Receipt and Upload image to FireBase storage
+        firebaseUtilities.UploadReceiptImage(ImageUrl,imageCount,ReceiptName, ReceiptDate, ReceiptAmount,store_id);
 
 
     }
@@ -151,6 +177,7 @@ public class NewReceiptActivity extends AppCompatActivity implements DatePickerD
         // Declare FireBase Instance.
         mAuth = FirebaseAuth.getInstance();
         myRef = FirebaseDatabase.getInstance().getReference();
+        stores = new ArrayList<>();
 
         Log.d(TAG, "onDataChange: Getting Count " + imageCount);
 
@@ -176,6 +203,42 @@ public class NewReceiptActivity extends AppCompatActivity implements DatePickerD
                 // getting count
                 imageCount = firebaseUtilities.GetRceieptImageCount(dataSnapshot);
                 Log.d(TAG, "onDataChange: Getting Count " + imageCount);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // query Store Names
+
+        Query query = myRef.child(getString(R.string.dbname_store)).orderByChild(getString(R.string.user_id)).equalTo(mAuth.getCurrentUser().getUid());
+        query.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG, "onChildAdded: Data Has been changec" + dataSnapshot.toString());
+                stores.add(dataSnapshot.getValue(Store.class));
+                ArrayAdapter<Store> arrayAdapter = new StoreSpinnerAdapter(mContext,R.layout.spinner_dropdown_item,stores);
+                mSpinner.setAdapter(arrayAdapter);
+
+
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override

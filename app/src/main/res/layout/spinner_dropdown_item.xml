@@ -8,7 +8,6 @@
         android:id="@+id/DropDown_img"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@drawable/ic_date_range"
         android:layout_margin="10dp"
         />
 
@@ -16,7 +15,7 @@
         android:id="@+id/DropDown_txt"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:text="Dette er en test "
+        android:text="@string/store_name"
         android:gravity="left|center"
         android:paddingStart="8dp"
         android:layout_margin="10dp"

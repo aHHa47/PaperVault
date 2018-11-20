@@ -65,6 +65,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:spinnerMode="dropdown"
+                    android:elevation="4dp"
                     >
 
                 </Spinner>

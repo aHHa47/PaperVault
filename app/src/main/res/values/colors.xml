@@ -7,4 +7,10 @@
     <color name="colorSecondary">#ef6c00</color>
     <color name="colorSecondaryDark">#b53d00</color>
     <color name="colorSecondaryLight">#ff9d3f</color>
+    <color name="Black_75_transparency">#80000000</color>
+
+
+    <color name="grey_100">#F5F5F5</color>
+    <color name="grey_300">#E0E0E0</color>
+    <color name="grey_500">#9E9E9E</color>
 </resources>

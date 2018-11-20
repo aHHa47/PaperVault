@@ -7,7 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/relaOut1">
-        <include layout="@layout/cardview_store_receipt_toolbar_layout"/>
+        <include layout="@layout/cardview_receipt_toolbar_layout"/>
 
     </RelativeLayout>
 
@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/relaOut2"
         android:layout_below="@id/relaOut1">
-        <include layout="@layout/receipt_specific_store_layout"/>
+        <include layout="@layout/fragment_all_receipts"/>
 
     </RelativeLayout>
 

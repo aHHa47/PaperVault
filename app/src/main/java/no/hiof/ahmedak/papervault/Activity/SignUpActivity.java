@@ -120,13 +120,15 @@ public class SignUpActivity extends Activity {
         if(CheckUserInput(email,password)){
             mProgressBar.setVisibility(View.VISIBLE);
             loadingTxt.setVisibility(View.VISIBLE);
-
+            //TODO: Check if User is already registered in Database
             firebaseUtilities.RegisterUserWithEmail(email,password);
         }
 
 
     }
 
+
+    //TODO: Check password length , and if Email already exist.
     private boolean CheckUserInput(String Email,String Password){
         Log.d(TAG, "CheckUserInput: Checking User Input for null value");
         if(Email.equals("") || Password.equals("") ){

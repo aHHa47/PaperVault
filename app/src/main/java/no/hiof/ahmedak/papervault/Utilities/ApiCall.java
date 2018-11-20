@@ -51,6 +51,13 @@ public class ApiCall {
         getRequestQueue().add(req);
     }
 
+    /**
+     * Get Companies Api Call.
+     * @param context
+     * @param query
+     * @param listener
+     * @param errorListener
+     */
     public static void getCompanies(Context context, String query,Response.Listener<String>
             listener,Response.ErrorListener errorListener) {
         Log.d(TAG, "getCompanies: getting Companies");

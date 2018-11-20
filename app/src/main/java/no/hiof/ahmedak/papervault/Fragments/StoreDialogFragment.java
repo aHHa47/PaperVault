@@ -24,6 +24,13 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,8 +41,10 @@ import java.util.List;
 
 import no.hiof.ahmedak.papervault.Adapters.AutoCompleteCompanyAdapter;
 import no.hiof.ahmedak.papervault.Model.Company;
+import no.hiof.ahmedak.papervault.Model.Store;
 import no.hiof.ahmedak.papervault.R;
 import no.hiof.ahmedak.papervault.Utilities.ApiCall;
+import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 
 public class StoreDialogFragment extends DialogFragment {
 
@@ -50,6 +59,13 @@ public class StoreDialogFragment extends DialogFragment {
     private AutoCompleteTextView auto_Search_store;
     private Context mContext;
     private ApiCall apiCall;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListner;
+    private FirebaseUtilities firebaseUtilities;
+    private DatabaseReference myRef;
+
+    private String UserInupt, Store_logo_path, Store_domain;
+
 
 
     @Nullable
@@ -57,16 +73,18 @@ public class StoreDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_new_store_dialog,container,false);
         mContext = view.getContext();
+
+        FirebaseAuthSetup();
+        firebaseUtilities = new FirebaseUtilities(mContext);
+
         // Getting Api Instance
         apiCall = ApiCall.getInstance(mContext);
 
         // Getting ref for UI
         CreateBtn = view.findViewById(R.id.Create_btn);
         CancelBtn = view.findViewById(R.id.Cancel_btn);
-        auto_search_location = view.findViewById(R.id.edittext_Search_location);
         auto_Search_store = view.findViewById(R.id.edittext_Search_store);
         Store_logo = view.findViewById(R.id.Store_logo);
-
         // AutoComplete Adapter
         autoCompleteCompanyAdapter = new AutoCompleteCompanyAdapter(mContext,R.layout.company_item_row_layout);
         auto_Search_store.setThreshold(2);
@@ -81,8 +99,10 @@ public class StoreDialogFragment extends DialogFragment {
                 Company company =(Company) parent.getItemAtPosition(position);
 
                 Glide.with(view.getContext()).load(company.getLogo_img_path()).into(Store_logo);
+                Store_logo_path = company.getLogo_img_path();
+                Store_domain = company.getLogo_domain();
+                UserInupt = company.getLogo_name();
 
-                // TODO: Add Store Name to Autocomplete TextView.
             }
         });
 
@@ -139,7 +159,14 @@ public class StoreDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
 
-                // TODO: Create New Store in our FireBase Table
+                // Register new Store
+                try{
+                    firebaseUtilities.RegisterNewStore(UserInupt,Store_domain,Store_logo_path);
+
+                }catch (NullPointerException e){
+                    Log.d(TAG, "onClick: NullPointerException" + e.getMessage());
+                }
+
 
                getDialog().dismiss();
             }
@@ -149,6 +176,31 @@ public class StoreDialogFragment extends DialogFragment {
         return view;
 
     }
+
+
+    /**
+     * FireBase Authentication Setup
+     */
+    public void FirebaseAuthSetup(){
+        Log.d(TAG, "FirebaseAuthSetup: Setting up firebase auth");
+        // Declare FireBase Instance.
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListner = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if(user != null){
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged: Signed in " + user.getUid());
+                }else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged: Signed Out");
+                }
+            }
+        };
+    }
+
 
 
     /**
@@ -194,6 +246,25 @@ public class StoreDialogFragment extends DialogFragment {
 
 
     }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // look for user Auth on start
+        mAuth.addAuthStateListener(mAuthListner);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(mAuthListner != null){
+            // Stop and remove Auth listener
+            mAuth.removeAuthStateListener(mAuthListner);
+        }
+    }
+
+
 
 
 }

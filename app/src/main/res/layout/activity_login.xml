@@ -49,21 +49,19 @@
         android:id="@+id/email_login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/Logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="20dp"
             android:background="@mipmap/ic_papervault_round"
             app:layout_constraintBottom_toTopOf="@+id/email"
             app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +74,7 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/colorSecondary"
             android:gravity="center"
@@ -90,14 +88,13 @@
             app:layout_constraintBottom_toTopOf="@+id/password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/Logo" />
 
         <EditText
             android:id="@+id/password"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/colorSecondary"
             android:gravity="center"
@@ -120,29 +117,34 @@
         <Button
             android:id="@+id/login_button"
             style="?android:textAppearanceSmall"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/button_rounded"
             android:text="@string/action_sign_in"
             android:textStyle="bold"
             android:textSize="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/login_gmail_button"
+            app:layout_constraintBottom_toTopOf="@+id/login_google_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/password" />
 
 
         <Button
-            android:id="@+id/login_gmail_button"
+            android:id="@+id/login_google_button"
             style="?android:textAppearanceSmall"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/button_rounded"
-            android:text="Google"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/common_google_signin_btn_text_light_normal"
+            android:text="Sign in with Google"
+            android:textAllCaps="false"
             android:textStyle="bold"
             android:textSize="12dp"
             app:layout_constraintBottom_toTopOf="@+id/login_Facebook_button"
@@ -153,46 +155,40 @@
         <Button
             android:id="@+id/login_Facebook_button"
             style="?android:textAppearanceSmall"
-            android:layout_width="150dp"
-            android:layout_height="48dp"
+            android:layout_width="200dp"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/button_rounded"
-            android:text="Facebook"
-            android:textStyle="bold"
+            android:text="Login with Facebook"
             android:textSize="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:background="@drawable/button_rounded"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/login_gmail_button"
-            app:layout_constraintVertical_bias="0.428" />
+            app:layout_constraintTop_toBottomOf="@+id/login_google_button" />
 
         <Button
             android:id="@+id/Sign_up_button"
             style="?android:textAppearanceSmall"
-            android:layout_width="150dp"
-            android:layout_height="48dp"
+            android:layout_width="200dp"
+            android:layout_height="35dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="24dp"
             android:background="@drawable/button_rounded"
             android:text="Sign up"
-            android:textStyle="bold"
             android:textSize="12dp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline2" />
+            app:layout_constraintTop_toBottomOf="@+id/login_Facebook_button" />
 
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="453dp" />
+
 
     </android.support.constraint.ConstraintLayout>
 

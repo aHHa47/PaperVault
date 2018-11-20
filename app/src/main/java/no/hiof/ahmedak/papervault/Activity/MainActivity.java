@@ -25,13 +25,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TableLayout;
-import android.widget.TextView;;
+import android.widget.TextView;
+import android.widget.Toast;;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.io.IOException;
@@ -39,10 +41,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import no.hiof.ahmedak.papervault.Adapters.ContnentMainAdapter;
 import no.hiof.ahmedak.papervault.Adapters.SectionsPageAdapter;
+import no.hiof.ahmedak.papervault.Model.Favorite;
+import no.hiof.ahmedak.papervault.Model.Receipt;
+import no.hiof.ahmedak.papervault.Model.Store;
 import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
 import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
@@ -75,7 +82,8 @@ public class MainActivity extends AppCompatActivity
    private static final int CAMERA_PERMS_REQUEST_CODE= 208;
 
     // Temp
-    private ArrayList<Integer> mData;
+    private ArrayList<Receipt>receipts;
+
 
 
 
@@ -90,20 +98,33 @@ public class MainActivity extends AppCompatActivity
         mContext = MainActivity.this;
         // Init methods
         FirebaseAuthSetup();
+        initialize();
         firebaseUtilities = new FirebaseUtilities(getApplicationContext());
-        OpenCamera();
+
+
+    }
+
+
+    /**
+     * Initialize UI Widgets
+     */
+    public void initialize(){
+
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Floating Action Button
 
+        // Drawer Layout
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+
+
+        // Navigation View
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -113,69 +134,35 @@ public class MainActivity extends AppCompatActivity
         profileName = headerView.findViewById(R.id.user_profile_name_txt);
 
 
-        // DataSet
-        // TODO: get data from Database.
-        
-        mData = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            mData.add(R.drawable.receipt_ex);
-        }
-        
         // RecycleView
         mRecyclerView = findViewById(R.id.recycle_view_content_main);
         mRecyclerView.setHasFixedSize(true);
 
         // RecycleView Manager
-
         mLayoutManager = new LinearLayoutManager(this , LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // RecycleView Adapter
-
-        mAdapter = new ContnentMainAdapter(mData);
-        mRecyclerView.setAdapter(mAdapter);
 
 
         //Table Layout
         tableLayout = findViewById(R.id.table_lay_out);
 
-        // TODO: Change to database
-        for (int x = 0; x < 40; x++) {
-            View tableRowView = LayoutInflater.from(this).inflate(R.layout.content_main_table_row_items,null,false);
-            TextView StoreName = tableRowView.findViewById(R.id.StoreName_table_txt);
-            TextView DateStore = tableRowView.findViewById(R.id.Date_table_txt);
-            TextView Price = tableRowView.findViewById(R.id.Price_table_txt);
 
-            // Temp
-            StoreName.setText("Store Name " + (x+1));
-            Date todayDate = Calendar.getInstance().getTime();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            String todayString = formatter.format(todayDate);
-            DateStore.setText(todayString);
-            Price.setText((299*(x+1))+ " Kr");
-            tableLayout.addView(tableRowView);
-
-        }
-
-    }
-
-
-    /**
-     * Camera
-     * Open Camera And send file path to New Receipt Activity.
-     */
-    private void OpenCamera(){
-
+        // Floating Button
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Open Camera");
-                CreatNewReceiptSetup();
+                OpenCamera();
             }
         });
 
+
+
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -189,8 +176,94 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    // Create new Receipt
-    private void CreatNewReceiptSetup() {
+    /**
+     * Get Last Ten Receipt Added
+     */
+    private void getLastTenReceipt(){
+
+            receipts = new ArrayList<>();
+            final ArrayList<Store> storeArrayList = new ArrayList<>();
+
+        Log.d(TAG, "getLastTenReceipt: Running Here ");
+
+        // query for last ten receipt for current user.
+        Query query = myRef.child(mContext.getString(R.string.dbname_receipt)).orderByChild(mContext.getString(R.string.user_id)).equalTo(mAuth.getCurrentUser().getUid()).limitToFirst(10);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
+                    Receipt receipt = new Receipt();
+                    Map<String,Object> objectMap = (HashMap<String, Object>)snapshot.getValue();
+
+                    receipt.setReceipt_date(objectMap.get(getString(R.string.receipt_date)).toString());
+                    receipt.setStore_id(objectMap.get(getString(R.string.store_id)).toString());
+                    receipt.setAmount(Double.parseDouble(objectMap.get(getString(R.string.amount)).toString()));
+                    receipt.setUser_id(objectMap.get(getString(R.string.user_id)).toString());
+                    receipt.setImage_path(objectMap.get(getString(R.string.image_path)).toString());
+                    receipt.setReceipt_title(objectMap.get(getString(R.string.receipt_title)).toString());
+                    receipt.setReceipt_id(objectMap.get(getString(R.string.receipt_id)).toString());
+                    //receipts.add(snapshot.getValue(Receipt.class));
+
+                   /* //List<Receipt> receiptList = new ArrayList<Receipt>();
+                    for(DataSnapshot dataSnapshot1 : snapshot.child(getString(R.string.favorite)).getChildren()){
+
+                        Receipt FavoriteReceipts = new Receipt();
+                        FavoriteReceipts.setFavorite(dataSnapshot1.getValue(Receipt.class).isFavorite());
+                        receiptList.add(FavoriteReceipts);
+
+                    }*/
+                    receipt.setFavorite(Boolean.parseBoolean(objectMap.get(getString(R.string.favorite)).toString()));
+                    receipts.add(receipt);
+
+                    Query query1 = myRef.child(mContext.getString(R.string.dbname_store)).orderByChild(mContext.getString(R.string.store_id)).equalTo(receipt.getStore_id());
+                    query1.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snap :dataSnapshot.getChildren()) {
+                                storeArrayList.add(snap.getValue(Store.class));
+                            }
+
+                            // Set Adapter
+                            mAdapter = new ContnentMainAdapter(getApplicationContext(),receipts, storeArrayList);
+                            mAdapter.notifyDataSetChanged();
+                            mRecyclerView.setAdapter(mAdapter);
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            Log.e(TAG, "onCancelled: " + databaseError.getMessage() );
+                        }
+                    });
+
+
+
+                }
+
+
+                if(!dataSnapshot.exists()){
+                    // TODO: Update User That Snapshot is empty
+                    Toast.makeText(mContext,"Failed to get Receipts, pleas close the app and try again later",Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+
+    /**
+     * Camera
+     * Open Camera And send file path to New Receipt Activity.
+     */
+    private void OpenCamera() {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -272,7 +345,7 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_info) {
             //TODO: Show Dialog box with app info.
-            mAuth.signOut();
+
         }
         // DONE: Fix Search Action.
         // TODO: implement search engine
@@ -357,6 +430,8 @@ public class MainActivity extends AppCompatActivity
 
                 if(user != null){
                     // User is signed in
+
+                    getLastTenReceipt();
                     Log.d(TAG, "onAuthStateChanged: Signed in " + user.getUid());
                 }else {
                     // User is signed out

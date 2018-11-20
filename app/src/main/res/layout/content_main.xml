@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,88 +9,30 @@
     tools:showIn="@layout/app_bar_main">
 
 
-
-    <!--Carousel RecyclerView-->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycle_view_content_main"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:id="@+id/relaOut1">
 
-    </android.support.v7.widget.RecyclerView>
-<!--Table LayOut-->
-    <TableLayout
-        android:id="@+id/table_lay_out"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="8dp"
-        android:stretchColumns="*"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycle_view_content_main">
 
-        <TableRow
-
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorSecondary">
+            android:id="@+id/relaOut2">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/relaOut1"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/StoreName_table_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="5dip"
-                    android:text="@string/Table_Store_Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="15dp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="120dp"
-                    />
+            <include layout="@layout/carousel_recyclerview_mainactivity"></include>
 
-                <TextView
-                    android:id="@+id/Date_table_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="5dip"
-                    android:text="@string/Table_Date_title"
-                    android:textColor="@android:color/white"
-                    android:textSize="15dp"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="60dp"/>
+        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/Price_table_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="5dip"
-                    android:text="@string/Table_Price_Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="15dp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </TableRow>
+       <!-- <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relaOut3"
+            android:layout_marginTop="30dp"
+            android:layout_below="@id/relaOut2">
 
+            <include layout="@layout/table_layout_mainactivity"></include>
+        </RelativeLayout>-->
 
-    </TableLayout>
-
-
-
-
-
-
-</android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
+</RelativeLayout>
