@@ -1,5 +1,6 @@
 package no.hiof.ahmedak.papervault.Activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -51,6 +52,7 @@ import no.hiof.ahmedak.papervault.Model.Receipt;
 
 import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
+import no.hiof.ahmedak.papervault.Utilities.CommonUtils;
 import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 import no.hiof.ahmedak.papervault.Utilities.permissions;
 
@@ -86,8 +88,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //CheckInternetConnection();
         setContentView(R.layout.activity_main);
-
         mContext = MainActivity.this;
         // Init methods
         FirebaseAuthSetup();
@@ -428,6 +430,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        //CheckInternetConnection();
         mAuth.addAuthStateListener(mAuthListner);
         // This will always check the user.
         CheckCurrentUser(mAuth.getCurrentUser());
@@ -438,6 +441,23 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
         if(mAuthListner != null){
             mAuth.removeAuthStateListener(mAuthListner);
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //CheckInternetConnection();
+
+    }
+
+    public void CheckInternetConnection(){
+        if(CommonUtils.isNetworkConnected(MainActivity.this)){
+            Toast.makeText(MainActivity.this,"Internet",Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(MainActivity.this,"Ikke Internet",Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
