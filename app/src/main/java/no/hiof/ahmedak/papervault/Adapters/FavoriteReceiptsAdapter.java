@@ -16,10 +16,14 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 import no.hiof.ahmedak.papervault.Model.Receipt;
 import no.hiof.ahmedak.papervault.Model.Store;
@@ -94,7 +98,61 @@ public class FavoriteReceiptsAdapter extends RecyclerView.Adapter<FavoriteReceip
         return ReceiptList.get(position);
     }
 
-    
+    // Sort Alphabetic
+    public void SortListAlpha(){
+        Collections.sort(ReceiptList, new Comparator<Receipt>() {
+            @Override
+            public int compare(Receipt o1, Receipt o2) {
+                if(o1.getReceipt_title() == null || o2.getReceipt_title() == null){
+                    return 0;
+                }
+                return o1.getReceipt_title().compareTo(o2.getReceipt_title());
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+    // Sort By Price
+    public void SortByPrice(){
+        Collections.sort(ReceiptList, new Comparator<Receipt>() {
+            @Override
+            public int compare(Receipt o1, Receipt o2) {
+
+                if(o1.getAmount() == o2.getAmount()){
+                    return 0;
+                }
+                else if(o1.getAmount()>o2.getAmount()){
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+    // Sort By Date
+    public void SortByDate(){
+        Collections.sort(ReceiptList, new Comparator<Receipt>() {
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
+            @Override
+            public int compare(Receipt o1, Receipt o2) {
+                if(o1.getReceipt_date() == null || o2.getReceipt_date() == null){
+                    return 0;
+                }
+                try {
+                    return dateFormat.parse(o1.getReceipt_date()).compareTo( dateFormat.parse(o2.getReceipt_date()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+        notifyDataSetChanged();
+    }
+
+
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
 

@@ -7,8 +7,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -55,9 +59,11 @@ public class FavoriteReceiptsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.activity_my_favorite, container, false);
+        setHasOptionsMenu(true);
         mContext = getActivity().getApplicationContext();
         receipts = new ArrayList<>();
         stores = new ArrayList<>();
+
         firebaseUtilities = new FirebaseUtilities(mContext);
         AllReceiptsRecyclerView = view.findViewById(R.id.All_Receipts_RecycleView);
         AllReceiptsRecyclerView.setHasFixedSize(true);
@@ -166,6 +172,41 @@ public class FavoriteReceiptsFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.activity_my_favorite_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        //noinspection Simplifiable Case Statement
+        switch (id){
+            case R.id.item_sort_alpha:
+                Toast.makeText(mContext,"Sorted By Title",Toast.LENGTH_LONG).show();
+                receiptsAdapter.SortListAlpha();
+                break;
+            case R.id.item_sort_date:
+                Toast.makeText(mContext,"Sorted By Date",Toast.LENGTH_LONG).show();
+                receiptsAdapter.SortByDate();
+                break;
+            case R.id.item_sort_price:
+                Toast.makeText(mContext,"Sorted By Price", Toast.LENGTH_LONG).show();
+                receiptsAdapter.SortByPrice();
+                break;
+            case R.id.item_sort_near_me:
+                Toast.makeText(mContext,"Sort button Near me", Toast.LENGTH_LONG).show();
+                break;
+            default:
+                break;
+
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
