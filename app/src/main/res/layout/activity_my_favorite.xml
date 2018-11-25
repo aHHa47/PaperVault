@@ -1,23 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/TabView_Container"
     tools:context=".Activity.MyFavorite">
 
 
+    <include layout="@layout/layout_center_view_pager"></include>
+   <RelativeLayout
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:id="@+id/relaOut1">
+       <RelativeLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/relaOut2">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/my_favorite_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:title="My Favorite"
-        app:titleTextColor="@android:color/white"
-        >
+           <android.support.v7.widget.Toolbar
+               android:id="@+id/my_favorite_toolbar"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="@color/colorPrimary"
+               app:title="My Favorite"
+               app:titleTextColor="@android:color/white"
+               >
 
-    </android.support.v7.widget.Toolbar>
+           </android.support.v7.widget.Toolbar>
+
+       </RelativeLayout>
+
+       <RelativeLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/relaOut3"
+           android:layout_below="@+id/relaOut2">
+           <include layout="@layout/fragment_all_receipts"/>
 
 
-</android.support.constraint.ConstraintLayout>
+
+       </RelativeLayout>
+
+       <TextView
+           android:id="@+id/emptyListText"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_centerHorizontal="true"
+           android:layout_centerVertical="true"
+           android:visibility="gone"
+           android:gravity="center"
+           android:textSize="16sp"
+           android:text="Favorite list is empty. To add new favorite receipts navigate to My Receipts"/>
+
+   </RelativeLayout>
+
+
+</FrameLayout>

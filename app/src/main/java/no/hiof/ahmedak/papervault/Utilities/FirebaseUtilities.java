@@ -18,24 +18,17 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 
-import java.util.ArrayList;
-
 import no.hiof.ahmedak.papervault.Activity.MainActivity;
-import no.hiof.ahmedak.papervault.Model.Favorite;
 import no.hiof.ahmedak.papervault.Model.Receipt;
 import no.hiof.ahmedak.papervault.Model.Store;
 import no.hiof.ahmedak.papervault.Model.User;
@@ -224,7 +217,7 @@ public class FirebaseUtilities {
      * @param date
      * @param price
      */
-    public void UploadReceiptImage(final String imagepath , int count , final String title, final String date, final double price, final String store_id){
+    public void UploadReceiptImage(final String imagepath , int count , final String title, final String date, final double price, final String store_id, final String receiptLocation){
 
         String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         storageReference = storageReference.child(ImageStorgePath + "/" + user_id + "/photo" + (count + 1));
@@ -256,10 +249,8 @@ public class FirebaseUtilities {
 
                             Uri fireBaseUri = task.getResult();
 
-                            RegisterNewReceipt(fireBaseUri.toString(),title,date,price, store_id);
-                            // send user back to MainActivity
-                            Intent intent = new Intent(mContext,MainActivity.class);
-                            mContext.startActivity(intent);
+                            RegisterNewReceipt(fireBaseUri.toString(),title,date,price, store_id,receiptLocation);
+
 
                         }
 
@@ -298,13 +289,12 @@ public class FirebaseUtilities {
      * @param date
      * @param price
      */
-    public void RegisterNewReceipt(String ImageUrl, String title, String date, double price, String store_id){
+    public void RegisterNewReceipt(String ImageUrl, String title, String date, double price, String store_id, String location){
 
         String Photo_id = myRef.child(mContext.getString(R.string.dbname_photo)).push().getKey();
-        String favoriteKey = myRef.push().getKey();
 
         Receipt receipt = new Receipt();
-        Favorite favorite = new Favorite();
+
         if(ImageUrl!= null && title!= null && date!= null  && store_id!= null){
 
             receipt.setReceipt_title(title);
@@ -314,9 +304,17 @@ public class FirebaseUtilities {
             receipt.setReceipt_date(date);
             receipt.setAmount(price);
             receipt.setStore_id(store_id);
+            receipt.setReceipt_location(location);
             receipt.setFavorite(false);
 
-            myRef.child(mContext.getString(R.string.dbname_receipt)).child(Photo_id).setValue(receipt);
+            myRef.child(mContext.getString(R.string.dbname_receipt)).child(Photo_id).setValue(receipt, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    // send user back to MainActivity
+                    Intent intent = new Intent(mContext,MainActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
 
         }else {
 
@@ -339,13 +337,24 @@ public class FirebaseUtilities {
         // Getting Store ID.
         String Stroe_Id = myRef.child(mContext.getString(R.string.dbname_store)).push().getKey();
 
-        Store store = new Store();
-        store.setStore_name(Name);
-        store.setStore_domain(Domain);
-        store.setStore_logo(Logo);
-        store.setStore_id(Stroe_Id);
-        store.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        myRef.child(mContext.getString(R.string.dbname_store)).child(Stroe_Id).setValue(store);
+        if(Name != null && Domain != null && Logo != null){
+            Store store = new Store();
+            store.setStore_name(Name);
+            store.setStore_domain(Domain);
+            store.setStore_logo(Logo);
+            store.setStore_id(Stroe_Id);
+            store.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            myRef.child(mContext.getString(R.string.dbname_store)).child(Stroe_Id).setValue(store, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    Toast.makeText(mContext,"New Store added",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+
+            Toast.makeText(mContext,"Failed to create new store, please check internet connection and try again later",Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -353,16 +362,10 @@ public class FirebaseUtilities {
      * Add Receipts to Favorite
      */
 
-    public void addReceiptToFavorite(String receiptId){
-        /*Favorite favorite = new Favorite();
+    public void addReceiptToFavorite(String receiptId,Boolean addedToFavorite){
+        myRef = FirebaseDatabase.getInstance().getReference().child(mContext.getString(R.string.dbname_receipt)).child(receiptId);
+        myRef.child(mContext.getString(R.string.favorite)).setValue(addedToFavorite);
 
-        String key = myRef.push().getKey();
-
-        favorite.setLiked(true);*/
-        Boolean liked = true;
-        Receipt receipt = new Receipt();
-        receipt.setFavorite(liked);
-        myRef.child(mContext.getString(R.string.dbname_receipt)).child(receiptId).child(mContext.getString(R.string.favorite)).setValue(receipt);
     }
 
 

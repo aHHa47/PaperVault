@@ -50,8 +50,8 @@ public class ActivitySettings extends AppCompatActivity {
 
         // Page Adapter
         sectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
-        sectionsPageAdapter.addFragment(new EditProfileFragment(),getString(R.string.profile_string));
-        sectionsPageAdapter.addFragment(new SigningOut_Fragment(),getString(R.string.Sign_Out_string));
+        sectionsPageAdapter.addFragment(new EditProfileFragment(),getString(R.string.profile_fragment));
+        sectionsPageAdapter.addFragment(new SigningOut_Fragment(),getString(R.string.Sign_Out_fragment));
     }
 
 
@@ -74,8 +74,8 @@ public class ActivitySettings extends AppCompatActivity {
         ListView listView = findViewById(R.id.listView_settings);
         // Create a list of Options
         ArrayList<String> settingsOpt = new ArrayList<>();
-        settingsOpt.add(getString(R.string.profile_string));
-        settingsOpt.add(getString(R.string.Sign_Out_string));
+        settingsOpt.add(getString(R.string.profile_fragment));
+        settingsOpt.add(getString(R.string.Sign_Out_fragment));
         // Create our Adapter for the list
         ArrayAdapter adapter = new ArrayAdapter(mContext,android.R.layout.simple_list_item_1,settingsOpt);
         // sets ListView Adapter.

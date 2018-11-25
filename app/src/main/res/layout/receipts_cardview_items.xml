@@ -136,22 +136,17 @@
             android:layout_below="@id/relaOut4"
             android:padding="5dp">
 
-            <ImageView
+            <ToggleButton
+                android:id="@+id/favorite_toggleBtn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/ic_heart_white"
-                android:id="@+id/CardView_FavoriteBtn"
+                android:background="@drawable/favorite_toggle_button"
+                android:text=""
+                android:checked="false"
+                android:textOff=""
+                android:textOn=""
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="20dp"
-               />
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/ic_heart_orange"
-                android:id="@+id/CardView_FavoriteBtn2"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="20dp"
-                />
+                android:layout_marginRight="20dp"/>
         </RelativeLayout>
 
 

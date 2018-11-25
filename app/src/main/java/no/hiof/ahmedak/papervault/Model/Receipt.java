@@ -16,9 +16,9 @@ public class Receipt implements Parcelable {
     private String user_id;
     private String store_id;
     private Boolean favorite;
+    private String receipt_location;
 
-
-    public Receipt(String receipt_id, double amount, String receipt_title, String receipt_date, String image_path, String user_id, String store_id, Boolean favorite) {
+    public Receipt(String receipt_id, double amount, String receipt_title, String receipt_date, String image_path, String user_id, String store_id, Boolean favorite, String receipt_location) {
         this.receipt_id = receipt_id;
         this.amount = amount;
         this.receipt_title = receipt_title;
@@ -27,9 +27,11 @@ public class Receipt implements Parcelable {
         this.user_id = user_id;
         this.store_id = store_id;
         this.favorite = favorite;
+        this.receipt_location = receipt_location;
     }
 
-    public Receipt() {
+    public Receipt(){
+
     }
 
     protected Receipt(Parcel in) {
@@ -42,23 +44,7 @@ public class Receipt implements Parcelable {
         store_id = in.readString();
         byte tmpFavorite = in.readByte();
         favorite = tmpFavorite == 0 ? null : tmpFavorite == 1;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(receipt_id);
-        dest.writeDouble(amount);
-        dest.writeString(receipt_title);
-        dest.writeString(receipt_date);
-        dest.writeString(image_path);
-        dest.writeString(user_id);
-        dest.writeString(store_id);
-        dest.writeByte((byte) (favorite == null ? 0 : favorite ? 1 : 2));
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        receipt_location = in.readString();
     }
 
     public static final Creator<Receipt> CREATOR = new Creator<Receipt>() {
@@ -137,6 +123,14 @@ public class Receipt implements Parcelable {
         this.favorite = favorite;
     }
 
+    public String getReceipt_location() {
+        return receipt_location;
+    }
+
+    public void setReceipt_location(String receipt_location) {
+        this.receipt_location = receipt_location;
+    }
+
     @Override
     public String toString() {
         return "Receipt{" +
@@ -148,6 +142,25 @@ public class Receipt implements Parcelable {
                 ", user_id='" + user_id + '\'' +
                 ", store_id='" + store_id + '\'' +
                 ", favorite=" + favorite +
+                ", receipt_location='" + receipt_location + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(receipt_id);
+        dest.writeDouble(amount);
+        dest.writeString(receipt_title);
+        dest.writeString(receipt_date);
+        dest.writeString(image_path);
+        dest.writeString(user_id);
+        dest.writeString(store_id);
+        dest.writeByte((byte) (favorite == null ? 0 : favorite ? 1 : 2));
+        dest.writeString(receipt_location);
     }
 }

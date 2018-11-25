@@ -50,6 +50,7 @@ public class ReceiptInfoFragment extends Fragment {
             Receipt_date.setText(receipt.getReceipt_date());
             Price = Double.toString(receipt.getAmount());
             Receipt_price.setText(Price + ";-");
+            Receipt_location.setText(receipt.getReceipt_location());
             ACT_number = getActivityNumberFromBundle();
 
         }catch (NullPointerException e){

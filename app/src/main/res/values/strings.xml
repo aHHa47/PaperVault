@@ -30,8 +30,7 @@
     <string name="Table_Date_title">Date</string>
     <string name="Table_Price_Title">Price</string>
 
-    <string name="profile_string">Profile</string>
-    <string name="Sign_Out_string">Sign Out</string>
+
     <string name="Image_path">Image_Path</string>
     <string name="date_picker">date_picker</string>
 
@@ -80,10 +79,13 @@
 
     <!--Strings related to Fragment-->
     <string name="receipt_info_view_fragment">Receipt Info</string>
+    <string name="profile_fragment">Profile</string>
+    <string name="Sign_Out_fragment">Sign Out</string>
 
     <!--Strings related to Permissions-->
     <string name="camera_permissions">This app need permission to use the camera built in this phone.</string>
-
+    <string name="Favorit_Receipt_fragment">Favorite Receipts</string>
+    <string name="ListEmptyMainContent">List is empty, click on the the icon below to add new receipt</string>
 
 
 </resources>

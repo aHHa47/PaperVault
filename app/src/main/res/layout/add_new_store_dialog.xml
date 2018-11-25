@@ -43,7 +43,7 @@
             android:layout_toRightOf="@id/relaOut2"
             android:layout_below="@id/relaOut1">
             <include layout="@layout/custom_edittext_layout_search_store"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
 

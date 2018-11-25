@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/relaOut1">
+
+    <RelativeLayout
+        android:id="@+id/relaOut2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/captured_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relaOut3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relaOut2">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <Spinner
+                    android:id="@+id/DropDown_menu_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:spinnerMode="dropdown"
+                    android:elevation="4dp"
+                    android:layout_marginBottom="10dp"
+                    >
+
+                </Spinner>
+                <EditText
+                    android:id="@+id/edittxt_Receipt_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Receipt Name"
+                    android:gravity="center"
+                    android:textSize="15sp"
+                    android:maxLines="1"
+                    android:imeOptions="flagNoExtractUi"/>
+
+                <include layout="@layout/custom_edittext_layout_location" />
+                <include layout="@layout/custom_edittext_layout_date"/>
+
+                <EditText
+                    android:id="@+id/edittxt_total_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:hint="Price (kr)"
+                    android:gravity="center"
+                    android:textSize="15sp"/>
+            </LinearLayout>
+    </RelativeLayout>
+
+
+    <!--OCR READ-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relaOut6"
+        android:layout_below="@id/relaOut3"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Raw Read"
+            android:gravity="center"
+            />
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
+
+</RelativeLayout>

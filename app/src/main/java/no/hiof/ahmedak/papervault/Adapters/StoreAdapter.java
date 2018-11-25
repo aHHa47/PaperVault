@@ -1,9 +1,7 @@
 package no.hiof.ahmedak.papervault.Adapters;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,8 +12,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,11 +20,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import no.hiof.ahmedak.papervault.Model.Favorite;
 import no.hiof.ahmedak.papervault.Model.Receipt;
 import no.hiof.ahmedak.papervault.Model.Store;
 import no.hiof.ahmedak.papervault.R;
@@ -86,35 +78,9 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.StoreViewHol
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Count = 0;
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    receipts.add(snapshot.getValue(Receipt.class));
 
-                    Receipt receipt = new Receipt();
-                    Map<String,Object> objectMap = (HashMap<String, Object>)snapshot.getValue();
-
-                    receipt.setReceipt_date(objectMap.get(mContext.getString(R.string.receipt_date)).toString());
-                    receipt.setStore_id(objectMap.get(mContext.getString(R.string.store_id)).toString());
-                    receipt.setAmount(Double.parseDouble(objectMap.get((mContext.getString(R.string.amount))).toString()));
-                    receipt.setUser_id(objectMap.get(mContext.getString(R.string.user_id)).toString());
-                    receipt.setImage_path(objectMap.get(mContext.getString(R.string.image_path)).toString());
-                    receipt.setReceipt_title(objectMap.get(mContext.getString(R.string.receipt_title)).toString());
-                    receipt.setReceipt_id(objectMap.get(mContext.getString(R.string.receipt_id)).toString());
-                    //receipts.add(snapshot.getValue(Receipt.class));
-
-                   /* List<Favorite> favoritesList = new ArrayList<Favorite>();
-                    for(DataSnapshot dataSnapshot1 : dataSnapshot.child(mContext.getString(R.string.favorite)).getChildren()){
-
-                        Favorite favorite = new Favorite();
-                        favorite.setLiked(dataSnapshot1.getValue(Favorite.class).getLiked());
-                        favoritesList.add(favorite);
-
-                    }
-                    receipt.setFavorite(favoritesList);*/
-                    receipt.setFavorite(Boolean.parseBoolean(objectMap.get(mContext.getString(R.string.favorite)).toString()));
-
-
-
-                    receipts.add(receipt);
-
-                    if(receipt.getStore_id().equals(storeArrayList.get(Position).getStore_id())){
+                    if(snapshot.getValue(Receipt.class).getStore_id().equals(storeArrayList.get(Position).getStore_id())){
                        // If we have a match then we increase our count for the store.
                         Count++;
                     }

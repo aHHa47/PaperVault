@@ -46,20 +46,19 @@ import java.util.List;
 import java.util.Map;
 
 import no.hiof.ahmedak.papervault.Adapters.ContnentMainAdapter;
-import no.hiof.ahmedak.papervault.Adapters.SectionsPageAdapter;
-import no.hiof.ahmedak.papervault.Model.Favorite;
+
 import no.hiof.ahmedak.papervault.Model.Receipt;
-import no.hiof.ahmedak.papervault.Model.Store;
+
 import no.hiof.ahmedak.papervault.Model.User;
 import no.hiof.ahmedak.papervault.R;
 import no.hiof.ahmedak.papervault.Utilities.FirebaseUtilities;
 import no.hiof.ahmedak.papervault.Utilities.permissions;
-import pub.devrel.easypermissions.AfterPermissionGranted;
+
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener, EasyPermissions.PermissionCallbacks{
 
    private RecyclerView mRecyclerView;
    private RecyclerView.LayoutManager mLayoutManager;
@@ -76,16 +75,10 @@ public class MainActivity extends AppCompatActivity
    private FirebaseDatabase firebaseDatabase;
    private DatabaseReference myRef;
    private FirebaseUtilities firebaseUtilities;
-   private TextView profileName;
-   private TextView profileEmail;
+   private TextView profileName,profileEmail, emptyText;
    private permissions perms;
    private static final int CAMERA_PERMS_REQUEST_CODE= 208;
-
-    // Temp
-    private ArrayList<Receipt>receipts;
-
-
-
+   private ArrayList<Receipt>receipts;
 
     public MainActivity() {
     }
@@ -143,6 +136,9 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
+        emptyText = findViewById(R.id.emptyListText);
+        emptyText.setVisibility(View.GONE);
+
 
         //Table Layout
         tableLayout = findViewById(R.id.table_lay_out);
@@ -154,11 +150,18 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Open Camera");
-                OpenCamera();
+
+                if(EasyPermissions.hasPermissions(mContext,permissions.PERMISSIONS_CAMERA)) {
+
+                    OpenCamera();
+
+                }
+                else {
+                    EasyPermissions.requestPermissions(MainActivity.this,"This app need permission to acces the phone storage and phone camera.",CAMERA_PERMS_REQUEST_CODE,permissions.PERMISSIONS_CAMERA);
+                }
+
             }
         });
-
-
 
     }
 
@@ -167,11 +170,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Send Image Path to New Receipt Activity.
-        Intent intent = new Intent(mContext,NewReceiptActivity.class);
-        intent.putExtra(getString(R.string.Image_path),mCurrentPhotoPath);
-        startActivity(intent);
+        if(resultCode == RESULT_OK){
+            if(requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE){
+                Toast.makeText(mContext,"Back to reality",Toast.LENGTH_SHORT).show();
+            }else {
+                // Send Image Path to New Receipt Activity.
+                Intent intent = new Intent(mContext,NewReceiptActivity.class);
+                intent.putExtra(getString(R.string.Image_path),mCurrentPhotoPath);
+                startActivity(intent);
+            }
+        }
 
     }
 
@@ -180,10 +188,7 @@ public class MainActivity extends AppCompatActivity
      * Get Last Ten Receipt Added
      */
     private void getLastTenReceipt(){
-
-            receipts = new ArrayList<>();
-            final ArrayList<Store> storeArrayList = new ArrayList<>();
-
+        receipts = new ArrayList<>();
         Log.d(TAG, "getLastTenReceipt: Running Here ");
 
         // query for last ten receipt for current user.
@@ -192,66 +197,24 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    Receipt receipt = new Receipt();
-                    Map<String,Object> objectMap = (HashMap<String, Object>)snapshot.getValue();
 
-                    receipt.setReceipt_date(objectMap.get(getString(R.string.receipt_date)).toString());
-                    receipt.setStore_id(objectMap.get(getString(R.string.store_id)).toString());
-                    receipt.setAmount(Double.parseDouble(objectMap.get(getString(R.string.amount)).toString()));
-                    receipt.setUser_id(objectMap.get(getString(R.string.user_id)).toString());
-                    receipt.setImage_path(objectMap.get(getString(R.string.image_path)).toString());
-                    receipt.setReceipt_title(objectMap.get(getString(R.string.receipt_title)).toString());
-                    receipt.setReceipt_id(objectMap.get(getString(R.string.receipt_id)).toString());
-                    //receipts.add(snapshot.getValue(Receipt.class));
-
-                   /* //List<Receipt> receiptList = new ArrayList<Receipt>();
-                    for(DataSnapshot dataSnapshot1 : snapshot.child(getString(R.string.favorite)).getChildren()){
-
-                        Receipt FavoriteReceipts = new Receipt();
-                        FavoriteReceipts.setFavorite(dataSnapshot1.getValue(Receipt.class).isFavorite());
-                        receiptList.add(FavoriteReceipts);
-
-                    }*/
-                    receipt.setFavorite(Boolean.parseBoolean(objectMap.get(getString(R.string.favorite)).toString()));
-                    receipts.add(receipt);
-
-                    Query query1 = myRef.child(mContext.getString(R.string.dbname_store)).orderByChild(mContext.getString(R.string.store_id)).equalTo(receipt.getStore_id());
-                    query1.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for (DataSnapshot snap :dataSnapshot.getChildren()) {
-                                storeArrayList.add(snap.getValue(Store.class));
-                            }
-
-                            // Set Adapter
-                            mAdapter = new ContnentMainAdapter(getApplicationContext(),receipts, storeArrayList);
-                            mAdapter.notifyDataSetChanged();
-                            mRecyclerView.setAdapter(mAdapter);
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            Log.e(TAG, "onCancelled: " + databaseError.getMessage() );
-                        }
-                    });
-
-
-
+                    receipts.add(snapshot.getValue(Receipt.class));
+                    // Set Adapter
+                    mAdapter = new ContnentMainAdapter(getApplicationContext(),receipts);
+                    mAdapter.notifyDataSetChanged();
+                    emptyText.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mRecyclerView.setAdapter(mAdapter);
                 }
-
-
                 if(!dataSnapshot.exists()){
-                    // TODO: Update User That Snapshot is empty
-                    Toast.makeText(mContext,"Failed to get Receipts, pleas close the app and try again later",Toast.LENGTH_LONG).show();
+                    emptyText.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
                 }
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Log.d(TAG, "onCancelled: DatabaseError" + databaseError.getMessage());
             }
         });
 
@@ -264,25 +227,25 @@ public class MainActivity extends AppCompatActivity
      * Open Camera And send file path to New Receipt Activity.
      */
     private void OpenCamera() {
+           Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+           if (intent.resolveActivity(getPackageManager()) != null) {
+               File mfile = null;
+               try {
+                   mfile = CreateImageFile();
 
-        if(intent.resolveActivity(getPackageManager())!= null) {
-            File mfile = null;
-            try {
-                mfile = CreateImageFile();
+               } catch (IOException e) {
+                   Log.d(TAG, "CreatNewReceiptSetup: NullPointerException" + e.getMessage());
+               }
 
-            } catch (IOException e) {
-                Log.d(TAG, "CreatNewReceiptSetup: NullPointerException" + e.getMessage());
-            }
+               // Continue only if the File was successfully created
+               if (mfile != null) {
+                   photoURI = FileProvider.getUriForFile(getApplicationContext(), "no.hiof.ahmedak.papervault.fileprovider", mfile);
+                   intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                   startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+               }
+           }
 
-            // Continue only if the File was successfully created
-            if (mfile != null) {
-                photoURI = FileProvider.getUriForFile(getApplicationContext(), "no.hiof.ahmedak.papervault.fileprovider", mfile);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-            }
-        }
     }
 
     /**
@@ -325,6 +288,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            finish();
         }
     }
 
@@ -347,7 +311,7 @@ public class MainActivity extends AppCompatActivity
             //TODO: Show Dialog box with app info.
 
         }
-        // DONE: Fix Search Action.
+
         // TODO: implement search engine
         else if(id == R.id.action_search){
             // Expand Search bar onClick.
@@ -369,9 +333,7 @@ public class MainActivity extends AppCompatActivity
 
             // Home
         if (id == R.id.nav_Home) {
-
-            intent = new Intent(getApplicationContext(),MainActivity.class);
-            startActivity(intent);
+            recreate();
             // My Receipts
         } else if (id == R.id.nav_my_receipts) {
             intent = new Intent(getApplicationContext(),MyReceipts.class);
@@ -480,4 +442,15 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+            OpenCamera();
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if(requestCode != CAMERA_PERMS_REQUEST_CODE){
+            return;
+        }
+    }
 }

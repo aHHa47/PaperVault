@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,6 +83,9 @@ public class StoreFragment extends android.support.v4.app.Fragment {
                 AddnewStore();
             }
         });
+
+
+
 
 
         // Recycle View Store Tab
@@ -183,17 +187,6 @@ public class StoreFragment extends android.support.v4.app.Fragment {
 
 
     }
-
-
-
-  /*  private void getReceiptCounts(){
-        Log.d(TAG, "getReceiptCounts: Getting Receipt Count");
-        Query query = myRef.child(getString(R.string.dbname_receipt)).orderByChild()
-
-
-    }*/
-
-
 
 
 
